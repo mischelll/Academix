@@ -19,7 +19,6 @@ public class UserController {
     public record UserDTO(String username) {}
 
     @GetMapping("/me")
-    @CrossOrigin("http://localhost:5173")
     public ResponseEntity<UserDTO> getMe() {
         logger.info("GET /me");
         return ResponseEntity.ok(new UserDTO("me"));
