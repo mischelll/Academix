@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchCurrentUser } from "../api/user";
+import { fetchProtectedCurrentUser } from "../api/user";
 
 export default function UserInfo() {
     const { data: user, isLoading, isError } = useQuery({
         queryKey: ['currentUser'],
-        queryFn: fetchCurrentUser,
+        queryFn: fetchProtectedCurrentUser,
       });
     
       if (isLoading) return <div className="p-6">Loading...</div>;
