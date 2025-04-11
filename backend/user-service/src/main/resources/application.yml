@@ -6,7 +6,7 @@ spring:
           google:
             client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirect-uri: "{baseUrl}/oauth2/callback/google"
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
             scope:
               - email
               - profile
@@ -18,9 +18,21 @@ spring:
 
 server:
   port: 8081
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+        path: /
+        secure: false
+        http-only: true
 
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
 
 
