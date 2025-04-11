@@ -1,19 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router} from 'react-router-dom'
 import './App.css'
-import OAuthSuccess from './components/OAuthSuccess'
-import Login from './components/Login'
-import UserInfo from './components/UserInfo'
+import AppRoutes from './AppRoutes'
 
-function App() {
+export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/home" element={<UserInfo />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/oauth-success" element={<OAuthSuccess />} />
-      </Routes>
+      <AppRoutes />
     </Router>
-  )
+  );
 }
-
-export default App

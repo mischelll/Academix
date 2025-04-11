@@ -15,6 +15,8 @@ export default function UserInfo() {
           <h1 className="text-2xl font-bold mb-4">User Info</h1>
           <div className="space-y-2 text-lg">
             <p><strong>Username:</strong> {user.username}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Name:</strong> {user.firstName}</p>
           </div>
         </div>
       );
