@@ -25,6 +25,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws java.io.IOException {
+        System.out.println("✅ Successful login callback reached");
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
@@ -33,7 +34,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         User build = User.builder()
                 .username("user123")
                 .password("123123")
-                .email("mail1@gmail.com")
+                .email(email)
                 .firstName(name)
                 .lastName("Smith")
                 .phone("+35988999999")
