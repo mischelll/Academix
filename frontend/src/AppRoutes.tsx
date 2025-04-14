@@ -14,6 +14,7 @@ export default function AppRoutes() {
 
   return (
     <Routes>
+        <Route path="/" element={<UserInfo />} />
       <Route path="/home" element={<UserInfo />} />
       <Route path="/login" element={<Login />} />
       <Route path="/oauth-success" element={<OAuthSuccess />} />
