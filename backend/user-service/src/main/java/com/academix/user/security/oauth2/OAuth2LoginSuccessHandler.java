@@ -29,14 +29,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
+        String familyName = oAuth2User.getAttribute("family_name");
 
         // Fetch or create user
         User build = User.builder()
-                .username("user123")
-                .password("123123")
+                .username(email)
+                .password("test-password")
                 .email(email)
                 .firstName(name)
-                .lastName("Smith")
+                .lastName(familyName)
                 .phone("+35988999999")
                 .city("Sofia")
                 .zip("1000")
