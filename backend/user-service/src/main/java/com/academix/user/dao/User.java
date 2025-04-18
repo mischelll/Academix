@@ -53,6 +53,12 @@ public class User {
     @Column
     private String zip;
 
+    @Column
+    private String avatar;
+
+    @Column
+    private Boolean isVerified;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

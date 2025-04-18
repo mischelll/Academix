@@ -30,10 +30,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
         String familyName = oAuth2User.getAttribute("family_name");
+        String picture = oAuth2User.getAttribute("picture");
+        boolean isVerified = Boolean.parseBoolean(oAuth2User.getAttribute("verified"));
 
         // Fetch or create user
         User build = User.builder()
                 .username(email)
+                .avatar(picture)
+                .isVerified(isVerified)
                 .password("test-password")
                 .email(email)
                 .firstName(name)
