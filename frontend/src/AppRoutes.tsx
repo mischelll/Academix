@@ -18,7 +18,7 @@ export default function AppRoutes() {
       <Route path="/" element={<UserInfo />} />
       <Route path="/home" element={<UserInfo />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/homework" element={<Homework />} />
+      <Route path="/assignments" element={<Homework />} />
       <Route path="/oauth-success" element={<OAuthSuccess />} />
     </Routes>
   );

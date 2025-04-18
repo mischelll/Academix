@@ -7,6 +7,6 @@ theme: {
   }
 
   export default {
-    darkMode: "class", // <-- this is required
+    darkMode: "class",
   
   }
