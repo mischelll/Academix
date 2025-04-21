@@ -26,10 +26,12 @@ public class SecurityConfig  {
                 .addFilterBefore(corsWebFilter, SecurityWebFiltersOrder.CORS)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .pathMatchers("/oauth2/**",
+                        .pathMatchers(
+                                "/oauth2/**",
                                 "/login/oauth2/**",
-                                "/api/users/me",
-                                "/api/auth/refresh").permitAll()
+                                "/api/auth/**",
+                                "/api/users/me"
+                                ).permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
