@@ -1,6 +1,6 @@
-package com.academix.user.dao.repository;
+package com.academix.userservice.repository;
 
-import com.academix.user.dao.User;
+import com.academix.userservice.dao.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

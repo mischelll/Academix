@@ -1,4 +1,4 @@
-package com.academix.user.security.oauth2;
+package com.academix.userservice.security.oauth2;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

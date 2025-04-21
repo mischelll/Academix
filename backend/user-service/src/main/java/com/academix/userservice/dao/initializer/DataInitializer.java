@@ -1,8 +1,8 @@
-package com.academix.user.dao.initializer;
+package com.academix.userservice.dao.initializer;
 
-import com.academix.user.dao.Role;
-import com.academix.user.dao.RoleEnum;
-import com.academix.user.dao.repository.RoleRepository;
+import com.academix.userservice.dao.Role;
+import com.academix.userservice.dao.RoleEnum;
+import com.academix.userservice.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

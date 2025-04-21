@@ -1,7 +1,7 @@
-package com.academix.user.dao.repository;
+package com.academix.userservice.repository;
 
-import com.academix.user.dao.Role;
-import com.academix.user.dao.RoleEnum;
+import com.academix.userservice.dao.Role;
+import com.academix.userservice.dao.RoleEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {

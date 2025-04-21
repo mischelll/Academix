@@ -1,4 +1,4 @@
-package com.academix.user.dao;
+package com.academix.userservice.dao;
 
 public enum RoleEnum {
 

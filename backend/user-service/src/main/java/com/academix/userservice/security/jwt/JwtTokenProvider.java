@@ -1,4 +1,4 @@
-package com.academix.user.security.jwt;
+package com.academix.userservice.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

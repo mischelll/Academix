@@ -1,20 +1,16 @@
-package com.academix.user.web;
+package com.academix.userservice.web;
 
-import com.academix.user.dao.User;
-import com.academix.user.dao.repository.UserRepository;
-import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.academix.userservice.dao.User;
+import com.academix.userservice.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @RestController
