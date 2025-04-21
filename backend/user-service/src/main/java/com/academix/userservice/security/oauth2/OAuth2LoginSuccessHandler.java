@@ -1,26 +1,28 @@
-package com.academix.user.security.oauth2;
+package com.academix.userservice.security.oauth2;
 
-import com.academix.user.dao.User;
-import com.academix.user.dao.repository.UserRepository;
-import com.academix.user.security.jwt.JwtTokenProvider;
+import com.academix.userservice.dao.RefreshToken;
+import com.academix.userservice.dao.User;
+import com.academix.userservice.repository.UserRepository;
+import com.academix.userservice.security.jwt.JwtTokenProvider;
+import com.academix.userservice.service.RefreshService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @Component
+@RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider tokenProvider;
-
+    private final RefreshService refreshService;
     private final UserRepository userRepository;
-
-    public OAuth2LoginSuccessHandler(JwtTokenProvider tokenProvider, UserRepository userRepository) {
-        this.tokenProvider = tokenProvider;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -34,7 +36,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         boolean isVerified = Boolean.parseBoolean(oAuth2User.getAttribute("verified"));
 
         // Fetch or create user
-        User build = User.builder()
+        User userBuilt = User.builder()
                 .username(email)
                 .avatar(picture)
                 .isVerified(isVerified)
@@ -48,9 +50,20 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .country("Bulgaria")
                 .build();
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(build));
+                .orElseGet(() -> userRepository.save(userBuilt));
 
         String jwt = tokenProvider.generateToken(user.getId());
+        RefreshToken refreshToken = refreshService.createRefreshToken(user.getId());
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(Duration.ofDays(7))
+                .sameSite("Lax")
+                .build();
+
+        response.setHeader("Set-Cookie", cookie.toString());
 
         String redirectUrl = "http://localhost:5173/oauth-success?token=" + jwt;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);

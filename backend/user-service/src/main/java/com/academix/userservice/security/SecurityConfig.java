@@ -1,8 +1,8 @@
-package com.academix.user.security;
+package com.academix.userservice.security;
 
-import com.academix.user.security.jwt.JwtAuthenticationFilter;
-import com.academix.user.security.oauth2.OAuth2LoginFailureHandler;
-import com.academix.user.security.oauth2.OAuth2LoginSuccessHandler;
+import com.academix.userservice.security.jwt.JwtAuthenticationFilter;
+import com.academix.userservice.security.oauth2.OAuth2LoginFailureHandler;
+import com.academix.userservice.security.oauth2.OAuth2LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +40,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/oauth2/**",
                                 "/login/oauth2/**",
-                                "/api/users/me"
+                                "/api/users/me",
+                                "/api/auth/refresh"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
