@@ -6,6 +6,11 @@ const apiClient = axios.create({
     withCredentials: true
 });
 
+const refreshClient = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_LOCAL_USER_SERVICE_URL,
+  withCredentials: true
+});
+
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('authToken');
 
@@ -22,11 +27,11 @@ apiClient.interceptors.response.use(
         const status = err.response?.status;
 
         console.log()
-        if (err.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/auth/refresh")) {
+        if (err.response?.status === 401 && !originalRequest._retry ) {
           originalRequest._retry = true;
     
           try {
-            const refreshRes = await apiClient.post("/auth/refresh");
+            const refreshRes = await refreshClient.post("/auth/refresh");
             const newAccessToken = refreshRes.data.accessToken;
     
             localStorage.setItem("authToken", newAccessToken);
