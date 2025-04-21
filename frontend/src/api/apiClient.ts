@@ -2,7 +2,8 @@ import axios from 'axios';
 import { redirect } from './navigation';
 
 const apiClient = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_LOCAL_USER_SERVICE_URL
+    baseURL: import.meta.env.VITE_BACKEND_LOCAL_USER_SERVICE_URL,
+    withCredentials: true
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -16,14 +17,36 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
     (res) => res,
-    (err) => {
+     async (err) => {
+        const originalRequest = err.config;
         const status = err.response?.status;
+
+        console.log()
+        if (err.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/auth/refresh")) {
+          originalRequest._retry = true;
+    
+          try {
+            const refreshRes = await apiClient.post("/auth/refresh");
+            const newAccessToken = refreshRes.data.accessToken;
+    
+            localStorage.setItem("authToken", newAccessToken);
+            originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+    
+            // Retry original request
+            return apiClient(originalRequest);
+          } catch (refreshError) {
+            console.warn("🔐 Refresh failed, logging out...", refreshError);
+            localStorage.removeItem("authToken");
+            window.location.href = "/login";
+            return Promise.reject(refreshError);
+          }
+        }
 
         if (status === 401 || status === 403) {
           console.warn("🔐 Unauthorized. Redirecting to login...");
-          localStorage.removeItem("token");
+          localStorage.removeItem("authToken");
           redirect("/login");
-          return;
+          return Promise.reject(err);
         }
     
         if (!status) {
