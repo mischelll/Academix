@@ -26,6 +26,10 @@ public class RefreshService {
     @Transactional
     public RefreshToken createRefreshToken(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
+        Optional<RefreshToken> byUserId = refreshTokenRepository.findByUserId(user.getId());
+        if (byUserId.isPresent()) {
+            return byUserId.get();
+        }
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .token(UUID.randomUUID().toString())
