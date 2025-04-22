@@ -25,23 +25,16 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    public record UserDTO(String username, String email, String firstName) {
-    }
-
-    @GetMapping("/me")
-    public ResponseEntity<UserDTO> getMe() {
-        logger.info("GET /me");
-        return ResponseEntity.ok(new UserDTO("me", "me@academix.com", "Me"));
+    public record UserDTO(String username, String email, String firstName, String avatar) {
     }
 
     @GetMapping("/protected/me")
     public ResponseEntity<UserDTO> getProtectedMe(@AuthenticationPrincipal String userId) {
         logger.info("GET /protected/me");
-        logger.info(userId);
         Optional<User> byId = userRepository.findById(Long.valueOf(userId));
         if (byId.isPresent()) {
             User user = byId.get();
-            return ResponseEntity.ok(new UserDTO(user.getUsername(), user.getEmail(), user.getFirstName()));
+            return ResponseEntity.ok(new UserDTO(user.getUsername(), user.getEmail(), user.getFirstName(), user.getAvatar()));
         }
 
         return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();

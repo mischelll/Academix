@@ -19,7 +19,7 @@ export function UserMenu({ avatarUrl, userInitials = "U" }: UserMenuProps) {
   const navigate = useNavigate();
   const clearUser = useUserStore((state) => state.clearUser);
   const queryClient = useQueryClient();
-
+  
   const handleProfileClick = () => {
     navigate("/profile");
   };
@@ -35,7 +35,7 @@ export function UserMenu({ avatarUrl, userInitials = "U" }: UserMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary transition">
-          <AvatarImage src={avatarUrl} alt="User avatar" />
+          <AvatarImage src={avatarUrl+""} alt="User avatar" />
           <AvatarFallback>{userInitials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
