@@ -10,7 +10,7 @@ export default function AppRoutes() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setNavigator(navigate); // ✅ now safe: inside <Router>
+    setNavigator(navigate); 
   }, [navigate]);
 
   return (

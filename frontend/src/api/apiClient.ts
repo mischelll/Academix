@@ -25,9 +25,9 @@ apiClient.interceptors.response.use(
      async (err) => {
         const originalRequest = err.config;
         const status = err.response?.status;
+        const accessToken = localStorage.getItem("authToken");
 
-        console.log()
-        if (err.response?.status === 401 && !originalRequest._retry ) {
+        if (err.response?.status === 401 && accessToken && !originalRequest._retry ) {
           originalRequest._retry = true;
     
           try {

@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserMenu } from "../UserMenu";
+import { useUserStore } from "@/stores/userStore";
 
 export default function Navbar() {
+  const user = useUserStore((state) => state.user);
+
   return (
     <nav className="w-full bg-white border-b shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -25,10 +28,7 @@ export default function Navbar() {
             Assignments
           </Link>
           {localStorage.getItem("authToken") ? (
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <UserMenu avatarUrl={user?.avatar} userInitials="MI" />
           ) : (
             <Button asChild>
               <a href="http://localhost:8081/oauth2/authorization/google">
