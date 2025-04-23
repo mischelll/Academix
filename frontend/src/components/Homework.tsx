@@ -8,7 +8,7 @@ export default function Homework() {
       });
     
       if (isLoading) return <div className="p-6">Loading...</div>;
-      if (isError) return <div className="p-6 text-red-500">Error fetching user info</div>;
+      if (isError) return <div className="p-6 text-red-500">Error fetching assignment info</div>;
     
       return (
         <div className="p-8">

@@ -1,6 +1,12 @@
 import {create} from 'zustand';
 
-type User = {
+
+export type Role = {
+    name: string,
+    description: string
+};
+
+export type User = {
     id: number,
     email: string,
     username: string
@@ -9,6 +15,7 @@ type User = {
     firstName: string,
     phone: string,
     city?: string,
+    roles: Role[] 
 };
 
 type UserState = {
