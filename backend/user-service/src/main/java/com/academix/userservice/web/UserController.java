@@ -1,5 +1,6 @@
 package com.academix.userservice.web;
 
+import com.academix.userservice.dao.Role;
 import com.academix.userservice.dao.User;
 import com.academix.userservice.repository.UserRepository;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,7 +27,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    public record UserDTO(String username, String email, String firstName, String avatar) {
+    public record UserDTO(String username, String email, String firstName, String avatar, Set<Role> roles) {
     }
 
     @GetMapping("/protected/me")
@@ -34,7 +36,7 @@ public class UserController {
         Optional<User> byId = userRepository.findById(Long.valueOf(userId));
         if (byId.isPresent()) {
             User user = byId.get();
-            return ResponseEntity.ok(new UserDTO(user.getUsername(), user.getEmail(), user.getFirstName(), user.getAvatar()));
+            return ResponseEntity.ok(new UserDTO(user.getUsername(), user.getEmail(), user.getFirstName(), user.getAvatar(), user.getRoles()));
         }
 
         return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();

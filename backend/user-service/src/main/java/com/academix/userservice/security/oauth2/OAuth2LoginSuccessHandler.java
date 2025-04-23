@@ -1,7 +1,9 @@
 package com.academix.userservice.security.oauth2;
 
 import com.academix.userservice.dao.RefreshToken;
+import com.academix.userservice.dao.RoleEnum;
 import com.academix.userservice.dao.User;
+import com.academix.userservice.repository.RoleRepository;
 import com.academix.userservice.repository.UserRepository;
 import com.academix.userservice.security.jwt.JwtTokenProvider;
 import com.academix.userservice.service.RefreshService;
@@ -15,6 +17,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -23,34 +26,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtTokenProvider tokenProvider;
     private final RefreshService refreshService;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws java.io.IOException {
         System.out.println("✅ Successful login callback reached");
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        String familyName = oAuth2User.getAttribute("family_name");
-        String picture = oAuth2User.getAttribute("picture");
-        boolean isVerified = Boolean.parseBoolean(oAuth2User.getAttribute("verified"));
 
-        // Fetch or create user
-        User userBuilt = User.builder()
-                .username(email)
-                .avatar(picture)
-                .isVerified(isVerified)
-                .password("test-password")
-                .email(email)
-                .firstName(name)
-                .lastName(familyName)
-                .phone("+35988999999")
-                .city("Sofia")
-                .zip("1000")
-                .country("Bulgaria")
-                .build();
-        User user = userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(userBuilt));
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        User user = handleUserAuthentication(oAuth2User);
 
         String jwt = tokenProvider.generateToken(user.getId());
         RefreshToken refreshToken = refreshService.createRefreshToken(user.getId());
@@ -67,5 +51,31 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String redirectUrl = "http://localhost:5173/oauth-success?token=" + jwt;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+    }
+
+    private User handleUserAuthentication(OAuth2User oAuth2User) {
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
+        String familyName = oAuth2User.getAttribute("family_name");
+        String picture = oAuth2User.getAttribute("picture");
+        boolean isVerified = Boolean.parseBoolean(oAuth2User.getAttribute("verified"));
+
+        User userBuilt = User.builder()
+                .username(email)
+                .avatar(picture)
+                .isVerified(isVerified)
+                .password("test-password")
+                .email(email)
+                .firstName(name)
+                .lastName(familyName)
+                .phone("+35988999999")
+                .city("Sofia")
+                .zip("1000")
+                .country("Bulgaria")
+                .roles(Set.of(roleRepository.findByName(RoleEnum.ROLE_STUDENT)))
+                .build();
+
+        // Fetch or create user
+        return userRepository.findByEmail(email).orElseGet(() -> userRepository.save(userBuilt));
     }
 }
