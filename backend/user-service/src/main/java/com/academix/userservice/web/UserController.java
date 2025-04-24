@@ -3,32 +3,34 @@ package com.academix.userservice.web;
 import com.academix.userservice.dao.Role;
 import com.academix.userservice.dao.User;
 import com.academix.userservice.repository.UserRepository;
+import com.academix.userservice.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserService userService;
 
-    public record UserDTO(String username, String email, String firstName, String avatar, Set<Role> roles) {
-    }
+
+    public record UserDTO(String username, String email, String firstName, String avatar, Set<Role> roles) {}
+
+    public record UserUpdateDTO(Long id, String username, String avatar, String phone) {}
+
 
     @GetMapping("/protected/me")
     public ResponseEntity<UserDTO> getProtectedMe(@AuthenticationPrincipal String userId) {
@@ -40,5 +42,11 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+    }
+
+    @PostMapping("/user-state")
+    public ResponseEntity<User> updateUserState(@RequestBody UserUpdateDTO userDTO) {
+        logger.info("POST /user-state");
+        return ResponseEntity.ok(userService.updateUser(userDTO));
     }
 }

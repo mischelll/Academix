@@ -1,5 +1,6 @@
 package com.academix.userservice.dao;
 
+import com.academix.userservice.web.UserController;
 import jakarta.persistence.*;
 import lombok.*;
 
