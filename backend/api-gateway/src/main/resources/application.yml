@@ -33,6 +33,10 @@ spring:
           uri: http://localhost:8082
           predicates:
             - Path=/api/homeworks/**
+        - id: homework-service-files
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/files/**
 
 logging:
   level:
