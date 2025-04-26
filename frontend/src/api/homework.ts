@@ -15,12 +15,11 @@ export const uploadHomework = async (fileName: string, file: File) => {
     }
   );
   const preSignedUrl = getPresignedUrlRes.data;
-  console.log(preSignedUrl)
 
   const uploadRes = await fetch(preSignedUrl, {
     method: "PUT",
     headers: {
-      "Content-Type": file.type || "application/octet-stream",
+      "Content-Type": "application/octet-stream",
     },
     body: file,
   });
