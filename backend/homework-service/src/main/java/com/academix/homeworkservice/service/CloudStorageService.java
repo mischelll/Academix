@@ -36,7 +36,7 @@ public class CloudStorageService {
 
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                     .putObjectRequest(putObjectRequest)
-                    .signatureDuration(Duration.ofMinutes(2))
+                    .signatureDuration(Duration.ofMinutes(5))
                     .build();
 
             PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);

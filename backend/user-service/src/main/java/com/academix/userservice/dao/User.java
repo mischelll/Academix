@@ -1,6 +1,5 @@
 package com.academix.userservice.dao;
 
-import com.academix.userservice.web.UserController;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -71,10 +70,6 @@ public class User {
 
     public void addRole(Role role) {
         this.roles.add(role);
-    }
-
-    public boolean hasRole(String roleName) {
-        return roles.stream().anyMatch(r -> r.getName().equals(roleName));
     }
 
 }
