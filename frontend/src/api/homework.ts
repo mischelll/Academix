@@ -7,6 +7,19 @@ export const fetchHomework = async () => {
   return res.data;
 };
 
+export const createHomework = async (studentId: number | undefined, filePath: string | undefined) => {
+  const res = await apiClient.post(apiUrl + "/homeworks", {
+    studentId: studentId,
+    filePath: filePath,
+  });
+
+  if (res.status !== 201) {
+    throw new Error("Homework creation is unsuccessful!");
+  }
+
+  return res.data;
+};
+
 export const uploadHomework = async (fileName: string, file: File) => {
   const getPresignedUrlRes = await apiClient.get(
     apiUrl + "/files/presigned-url",
@@ -28,5 +41,5 @@ export const uploadHomework = async (fileName: string, file: File) => {
     throw new Error("Upload to S3 failed");
   }
 
-  return true;
+  return uploadRes.url;
 };

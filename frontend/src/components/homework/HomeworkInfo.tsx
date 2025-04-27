@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchHomework, uploadHomework } from "../api/homework";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { fetchHomework, uploadHomework, createHomework } from "../../api/homework";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import { Upload } from "lucide-react";
 import { useState } from "react";
+import { useUserStore } from "@/stores/userStore";
 
-export default function Homework() {
+export default function HomeworkInfo() {
   const {
     data: homework,
     isLoading,
@@ -17,6 +18,7 @@ export default function Homework() {
 
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const user = useUserStore((state) => state.user);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -29,7 +31,10 @@ export default function Homework() {
 
     setUploading(true);
     try {
-      await uploadHomework(file.name, file);
+      const filePath = await uploadHomework(file.name, file);
+      console.info(filePath)
+      alert("✅ Upload successful!");
+      await createHomework(user?.id, filePath);
       alert("✅ Upload successful!");
     } catch (err) {
       console.error("❌ Upload failed:", err);

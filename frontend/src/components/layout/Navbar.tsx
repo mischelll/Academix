@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { UserMenu } from "../UserMenu";
+import { UserMenu } from "../user/UserMenu";
 import { useUserStore } from "@/stores/userStore";
 
 export default function Navbar() {
   const user = useUserStore((state) => state.user);
-  {console.log(user)}
-
 
   return (
     <nav className="bg-gray-800">
