@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { setNavigator } from "./api/navigation";
 import Homework from "./components/homework/Homework";
 import Home from "./components/Home";
+import Curriculum from "./components/curriculum/Curriculum";
 
 export default function AppRoutes() {
   const navigate = useNavigate();
@@ -21,6 +22,9 @@ export default function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/profile" element={<UserInfo />} />
       <Route path="/assignments" element={<Homework />} />
+      <Route path="/curriculum" element={<Curriculum />} />
+
+      {/* Security */}
       <Route path="/oauth-success" element={<OAuthSuccess />} />
     </Routes>
   );
