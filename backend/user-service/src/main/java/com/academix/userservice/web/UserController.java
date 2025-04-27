@@ -23,13 +23,13 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
-
     private final UserService userService;
 
+    public record UserDTO(Long id, String username, String email, String firstName, String avatar, Set<Role> roles) {
+    }
 
-    public record UserDTO(String username, String email, String firstName, String avatar, Set<Role> roles) {}
-
-    public record UserUpdateDTO(Long id, String username, String avatar, String phone) {}
+    public record UserUpdateDTO(Long id, String username, String avatar, String phone) {
+    }
 
 
     @GetMapping("/protected/me")
@@ -38,7 +38,14 @@ public class UserController {
         Optional<User> byId = userRepository.findById(Long.valueOf(userId));
         if (byId.isPresent()) {
             User user = byId.get();
-            return ResponseEntity.ok(new UserDTO(user.getUsername(), user.getEmail(), user.getFirstName(), user.getAvatar(), user.getRoles()));
+            return ResponseEntity.ok(new UserDTO(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getAvatar(),
+                    user.getRoles())
+            );
         }
 
         return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
