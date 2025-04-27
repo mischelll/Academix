@@ -1,10 +1,10 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import OAuthSuccess from "./components/OAuthSuccess";
 import Login from "./components/Login";
-import UserInfo from "./components/UserInfo";
+import UserInfo from "./components/user/UserInfo";
 import { useEffect } from "react";
 import { setNavigator } from "./api/navigation";
-import Homework from "./components/Homework";
+import Homework from "./components/homework/Homework";
 import Home from "./components/Home";
 
 export default function AppRoutes() {
