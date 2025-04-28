@@ -1,0 +1,24 @@
+package com.academix.curriculumservice.dao.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "course_students")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CourseStudent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long courseId;
+
+    private Long studentId;
+}
