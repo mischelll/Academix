@@ -40,11 +40,20 @@ export function UserMenu({ avatarUrl, userInitials = "UU" }: UserMenuProps) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48 mt-2" align="end">
+      <DropdownMenuItem onClick={handleProfileClick}>
+          Dashboard
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleProfileClick}>
           My Profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleProfileClick}>
+          Curriculum
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout}>
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

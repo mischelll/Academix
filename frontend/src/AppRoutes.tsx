@@ -20,7 +20,7 @@ export default function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/profile" element={<UserInfo />} />
+      <Route path="/profile" element={<UserInfo />}/>
       <Route path="/assignments" element={<Homework />} />
       <Route path="/curriculum" element={<Curriculum />} />
 

@@ -1,27 +1,34 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchProtectedCurrentUser } from "./api/user";
 import AppRoutes from "./AppRoutes";
 import Navbar from "./components/layout/Navbar";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { fetchProtectedCurrentUser } from "./api/user";
 import { useUserStore } from "./stores/userStore";
 
 export default function App() {
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
+  const token = localStorage.getItem("authToken");
 
-    fetchProtectedCurrentUser()
-      .then((user) => {
-        setUser(user);
-      })
-      .catch(() => {
-        localStorage.removeItem("authToken");
-        navigate("/login");
-      });
-  }, [setUser, navigate]);
+  const { data: user, isError } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: fetchProtectedCurrentUser,
+    enabled: !!token, // only try if token exists
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+    if (isError) {
+      localStorage.removeItem("authToken");
+      navigate("/login");
+    }
+  }, [user, isError, setUser, navigate]);
+
   return (
     <>
       <Navbar />
