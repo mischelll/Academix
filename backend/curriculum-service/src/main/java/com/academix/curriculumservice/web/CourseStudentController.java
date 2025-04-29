@@ -2,6 +2,8 @@ package com.academix.curriculumservice.web;
 
 import com.academix.curriculumservice.dao.entity.CourseStudent;
 import com.academix.curriculumservice.service.CourseStudentService;
+import com.academix.curriculumservice.service.dto.course_student.AssignStudentCourseRequest;
+import com.academix.curriculumservice.service.dto.course_student.CourseStudentDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,25 +20,18 @@ public class CourseStudentController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseStudent> create(@RequestBody CourseStudent courseStudent) {
-        return ResponseEntity.ok(service.create(courseStudent));
+    public ResponseEntity<CourseStudentDTO> create(@RequestBody AssignStudentCourseRequest assignStudentCourseRequest) {
+        return ResponseEntity.ok(service.assignStudent(assignStudentCourseRequest));
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseStudent>> findAll() {
-        return ResponseEntity.ok(service.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CourseStudent> findById(@PathVariable Long id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<List<CourseStudentDTO>> findAll() {
+        return ResponseEntity.ok(service.getAllAssignments());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.deleteById(id);
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

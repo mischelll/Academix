@@ -19,24 +19,20 @@ public class CourseService {
 
     public CourseDTO create(CreateCourseRequest request) {
         Course course = courseMapper.fromCreateRequest(request);
-        course = courseRepository.save(course);
-        return courseMapper.toDto(course);
+        return courseMapper.toDto(courseRepository.save(course));
     }
 
-    public List<Course> findAll() {
-        return courseRepository.findAll();
-    }
-
-    public Course findById(Long id) {
+    public CourseDTO getById(Long id) {
         return courseRepository.findById(id)
+                .map(courseMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
-    public Course update(Long id, Course updatedCourse) {
-        Course existing = findById(id);
-        existing.setName(updatedCourse.getName());
-        existing.setSemester(updatedCourse.getSemester());
-        return courseRepository.save(existing);
+    public List<CourseDTO> getAllCourses() {
+        return courseRepository.findAll()
+                .stream()
+                .map(courseMapper::toDto)
+                .toList();
     }
 
     public void delete(Long id) {

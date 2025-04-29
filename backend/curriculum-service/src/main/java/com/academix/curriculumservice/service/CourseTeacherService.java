@@ -2,6 +2,9 @@ package com.academix.curriculumservice.service;
 
 import com.academix.curriculumservice.dao.entity.CourseTeacher;
 import com.academix.curriculumservice.dao.repository.CourseTeacherRepository;
+import com.academix.curriculumservice.service.dto.course_teacher.AssignTeacherCourseReques;
+import com.academix.curriculumservice.service.dto.course_teacher.CourseTeacherDTO;
+import com.academix.curriculumservice.service.mapper.CourseTeacherMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,20 +20,21 @@ public class CourseTeacherService {
     private final static Logger LOGGER = LoggerFactory.getLogger(CourseTeacherService.class);
 
     private final CourseTeacherRepository repository;
+    private final CourseTeacherMapper mapper;
 
-    public CourseTeacher create(CourseTeacher courseTeacher) {
-        return repository.save(courseTeacher);
+    public CourseTeacherDTO assignTeacher(AssignTeacherCourseReques request) {
+        CourseTeacher courseTeacher = mapper.fromCreateRequest(request);
+        return mapper.toDto(repository.save(courseTeacher));
     }
 
-    public List<CourseTeacher> findAll() {
-        return repository.findAll();
+    public List<CourseTeacherDTO> getAllAssignments() {
+        return repository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
-    public Optional<CourseTeacher> findById(Long id) {
-        return repository.findById(id);
-    }
-
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 }
