@@ -1,5 +1,6 @@
-
 import { Role, useUserStore } from "@/stores/userStore";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 export default function UserInfo() {
   const user = useUserStore((state) => state.user);
@@ -20,14 +21,24 @@ export default function UserInfo() {
         <p>
           <strong>Roles [</strong>
           {user?.roles.map((role: Role) => {
-            return (
-              <span>
-                {role?.name}
-              </span>
-            );
+            return <span>{role?.name}</span>;
           })}
           <strong>]</strong>
         </p>
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast("Update user event", {
+              description: "Sunday, December 03, 2023 at 9:00 AM",
+              action: {
+                label: "Close",
+                onClick: () => console.log("Undo"),
+              },
+            })
+          }
+        >
+          Update Info
+        </Button>
       </div>
     </div>
   );

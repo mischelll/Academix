@@ -1,31 +1,55 @@
 import { useEffect } from "react";
-import {Table, TableHeader, TableRow, TableHead, TableBody, TableCell, TableFooter } from "../ui/table";
+// import {
+//   Table,
+//   TableHeader,
+//   TableRow,
+//   TableHead,
+//   TableBody,
+//   TableCell,
+//   TableFooter,
+// } from "../ui/table";
 import { fetchCurriculum } from "@/api/curriculum";
 
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogHeader } from "../ui/dialog";
+
 export default function Curriculum() {
+  useEffect(() => {
+    fetchCurriculum()
+      .then(() => {
+        console.log("SUCCESS");
+      })
+      .catch(() => {
+        console.error("ERROR");
+      });
+  }, []);
 
-    useEffect(() => {
-        fetchCurriculum()
-        .then(() => {
-            console.log("SUCCESS")
-          })
-          .catch(() => {
-            console.error("ERROR")
-          });
-    }, [])
-
-    return (
-        <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Title</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Student</TableHead>
-          <TableHead className="text-right">File</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {/* {homeworks.map((homework) => (
+  return (
+    <>
+    <Dialog>
+  <DialogTrigger>Open</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Are you absolutely sure?</DialogTitle>
+      <DialogDescription>
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers.
+      </DialogDescription>
+    </DialogHeader>
+  </DialogContent>
+</Dialog>
+{/* 
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Title</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Student</TableHead>
+            <TableHead className="text-right">File</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {/* {homeworks.map((homework) => (
           <TableRow key={homework.fileKey}>
             <TableCell className="font-medium">{homework.title}</TableCell>
             <TableCell>{homework.status}</TableCell>
@@ -35,26 +59,8 @@ export default function Curriculum() {
                 </TableCell>
           </TableRow>
         ))} */}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Submitted</TableCell>
-          <TableCell className="text-right">1</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell colSpan={3}>Under Review</TableCell>
-          <TableCell className="text-right">2</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell colSpan={3}>Reviewed</TableCell>
-          <TableCell className="text-right">1</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell colSpan={3}>Returned</TableCell>
-          <TableCell className="text-right">0</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
-    )
+        
 
+    </>
+  );
 }
