@@ -2,6 +2,8 @@ package com.academix.curriculumservice.web;
 
 import com.academix.curriculumservice.dao.entity.Course;
 import com.academix.curriculumservice.service.CourseService;
+import com.academix.curriculumservice.service.dto.course.CourseDTO;
+import com.academix.curriculumservice.service.dto.course.CreateCourseRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class CourseController {
     }
 
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
-        return courseService.create(course);
+    public CourseDTO createCourse(@RequestBody CreateCourseRequest createCourseRequest) {
+        return courseService.create(createCourseRequest);
     }
 
     @PutMapping("/{id}")
