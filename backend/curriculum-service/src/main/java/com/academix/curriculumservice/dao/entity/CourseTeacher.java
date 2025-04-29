@@ -2,27 +2,25 @@ package com.academix.curriculumservice.dao.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "lessons")
+@Table(name = "course_teachers")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Lesson {
+@AllArgsConstructor
+@Builder
+public class CourseTeacher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String description;
-
-    @ManyToOne(targetEntity = Course.class)
+    @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    private Long teacherId;
 }

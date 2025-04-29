@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,8 +29,9 @@ public class Course {
     private Long teacherId;
 
     @ManyToOne(targetEntity = Semester.class)
+    @JoinColumn(name = "semester_id")
     private Semester semester;
 
-    @OneToMany(mappedBy = "course", orphanRemoval = true)
-    private List<Lesson> lessons;
+    @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Lesson> lessons = new ArrayList<>();
 }

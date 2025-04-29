@@ -25,8 +25,9 @@ public class Semester {
     private String name;
 
     @ManyToOne(targetEntity = Major.class)
+    @JoinColumn(name = "major_id")
     private Major major;
 
-    @OneToMany(mappedBy = "semester")
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
     private List<Course> courses = new ArrayList<>();
 }

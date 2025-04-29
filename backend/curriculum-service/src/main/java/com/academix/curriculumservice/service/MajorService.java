@@ -17,8 +17,26 @@ public class MajorService {
 
     private final MajorRepository majorRepository;
 
-    public List<Major> getAllMajors(){
-        logger.info("Getting all majors");
+    public List<Major> findAll() {
         return majorRepository.findAll();
+    }
+
+    public Major findById(Long id) {
+        return majorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Major not found"));
+    }
+
+    public Major create(Major major) {
+        return majorRepository.save(major);
+    }
+
+    public Major update(Long id, Major updatedMajor) {
+        Major existing = findById(id);
+        existing.setName(updatedMajor.getName());
+        return majorRepository.save(existing);
+    }
+
+    public void delete(Long id) {
+        majorRepository.deleteById(id);
     }
 }

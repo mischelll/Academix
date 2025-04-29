@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,25 +16,21 @@ public class CourseStudentService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CourseStudentService.class);
 
-    private final CourseStudentRepository courseStudentRepository;
+    private final CourseStudentRepository repository;
 
-
-    public List<CourseStudent> getStudentsForCourse(Long courseId) {
-        return courseStudentRepository.findByCourseId(courseId);
+    public CourseStudent create(CourseStudent courseStudent) {
+        return repository.save(courseStudent);
     }
 
-    public void assignStudentToCourse(Long courseId, Long studentId) {
-        CourseStudent assignment = CourseStudent.builder()
-                .courseId(courseId)
-                .studentId(studentId)
-                .build();
-        courseStudentRepository.save(assignment);
+    public List<CourseStudent> findAll() {
+        return repository.findAll();
     }
 
-    public void removeStudentFromCourse(Long courseId, Long studentId) {
-        List<CourseStudent> assignments = courseStudentRepository.findByCourseId(courseId);
-        assignments.stream()
-                .filter(a -> a.getStudentId().equals(studentId))
-                .forEach(courseStudentRepository::delete);
+    public Optional<CourseStudent> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 }

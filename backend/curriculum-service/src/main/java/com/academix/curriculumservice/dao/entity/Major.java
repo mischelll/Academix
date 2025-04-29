@@ -3,6 +3,7 @@ package com.academix.curriculumservice.dao.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class Major {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "major")
-    private List<Semester> semesters;
+    @OneToMany(mappedBy = "major", cascade = CascadeType.ALL)
+    private List<Semester> semesters = new ArrayList<>();
 
 }
