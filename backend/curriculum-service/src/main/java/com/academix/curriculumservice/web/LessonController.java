@@ -2,6 +2,8 @@ package com.academix.curriculumservice.web;
 
 import com.academix.curriculumservice.dao.entity.Lesson;
 import com.academix.curriculumservice.service.LessonService;
+import com.academix.curriculumservice.service.dto.lesson.CreateLessonRequest;
+import com.academix.curriculumservice.service.dto.lesson.LessonDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,24 +18,19 @@ public class LessonController {
         this.lessonService = lessonService;
     }
 
-    @GetMapping
-    public List<Lesson> getAllLessons() {
-        return lessonService.findAll();
+    @PostMapping
+    public LessonDTO createLesson(@RequestBody CreateLessonRequest request) {
+        return lessonService.createLesson(request);
     }
 
     @GetMapping("/{id}")
-    public Lesson getLesson(@PathVariable Long id) {
-        return lessonService.findById(id);
+    public LessonDTO getLesson(@PathVariable Long id) {
+        return lessonService.getLesson(id);
     }
 
-    @PostMapping
-    public Lesson createLesson(@RequestBody Lesson lesson) {
-        return lessonService.create(lesson);
-    }
-
-    @PutMapping("/{id}")
-    public Lesson updateLesson(@PathVariable Long id, @RequestBody Lesson lesson) {
-        return lessonService.update(id, lesson);
+    @GetMapping
+    public List<LessonDTO> getAllLessons() {
+        return lessonService.getAllLessons();
     }
 
     @DeleteMapping("/{id}")

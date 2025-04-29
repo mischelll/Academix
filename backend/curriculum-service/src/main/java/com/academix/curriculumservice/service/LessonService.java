@@ -2,6 +2,9 @@ package com.academix.curriculumservice.service;
 
 import com.academix.curriculumservice.dao.entity.Lesson;
 import com.academix.curriculumservice.dao.repository.LessonRepository;
+import com.academix.curriculumservice.service.dto.lesson.CreateLessonRequest;
+import com.academix.curriculumservice.service.dto.lesson.LessonDTO;
+import com.academix.curriculumservice.service.mapper.LessonMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,26 +13,26 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class LessonService {
-    private final LessonRepository lessonRepository;
 
-    public List<Lesson> findAll() {
-        return lessonRepository.findAll();
+    private final LessonRepository lessonRepository;
+    private final LessonMapper mapper;
+
+    public LessonDTO createLesson(CreateLessonRequest request) {
+        Lesson lesson = mapper.fromCreateRequest(request);
+        return mapper.toDto(lessonRepository.save(lesson));
     }
 
-    public Lesson findById(Long id) {
+    public LessonDTO getLesson(Long id) {
         return lessonRepository.findById(id)
+                .map(mapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
     }
 
-    public Lesson create(Lesson lesson) {
-        return lessonRepository.save(lesson);
-    }
-
-    public Lesson update(Long id, Lesson updatedLesson) {
-        Lesson existing = findById(id);
-        existing.setTitle(updatedLesson.getTitle());
-        existing.setCourse(updatedLesson.getCourse());
-        return lessonRepository.save(existing);
+    public List<LessonDTO> getAllLessons() {
+        return lessonRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
     public void delete(Long id) {

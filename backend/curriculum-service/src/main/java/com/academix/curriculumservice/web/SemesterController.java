@@ -2,6 +2,8 @@ package com.academix.curriculumservice.web;
 
 import com.academix.curriculumservice.dao.entity.Semester;
 import com.academix.curriculumservice.service.SemesterService;
+import com.academix.curriculumservice.service.dto.semester.CreateSemesterRequest;
+import com.academix.curriculumservice.service.dto.semester.SemesterDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,24 +18,19 @@ public class SemesterController {
         this.semesterService = semesterService;
     }
 
-    @GetMapping
-    public List<Semester> getAllSemesters() {
-        return semesterService.findAll();
+    @PostMapping
+    public SemesterDTO createSemester(@RequestBody CreateSemesterRequest request) {
+        return semesterService.createSemester(request);
     }
 
     @GetMapping("/{id}")
-    public Semester getSemester(@PathVariable Long id) {
-        return semesterService.findById(id);
+    public SemesterDTO getSemester(@PathVariable Long id) {
+        return semesterService.getSemester(id);
     }
 
-    @PostMapping
-    public Semester createSemester(@RequestBody Semester semester) {
-        return semesterService.create(semester);
-    }
-
-    @PutMapping("/{id}")
-    public Semester updateSemester(@PathVariable Long id, @RequestBody Semester semester) {
-        return semesterService.update(id, semester);
+    @GetMapping
+    public List<SemesterDTO> getAllSemesters() {
+        return semesterService.getAllSemesters();
     }
 
     @DeleteMapping("/{id}")

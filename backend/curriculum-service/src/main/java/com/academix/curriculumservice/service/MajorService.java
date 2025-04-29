@@ -2,6 +2,9 @@ package com.academix.curriculumservice.service;
 
 import com.academix.curriculumservice.dao.entity.Major;
 import com.academix.curriculumservice.dao.repository.MajorRepository;
+import com.academix.curriculumservice.service.dto.major.CreateMajorRequest;
+import com.academix.curriculumservice.service.dto.major.MajorDTO;
+import com.academix.curriculumservice.service.mapper.MajorMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,24 +19,24 @@ public class MajorService {
     private static Logger logger = LoggerFactory.getLogger(MajorService.class);
 
     private final MajorRepository majorRepository;
+    private final MajorMapper mapper;
 
-    public List<Major> findAll() {
-        return majorRepository.findAll();
+    public MajorDTO createMajor(CreateMajorRequest request) {
+        Major major = mapper.fromCreateRequest(request);
+        return mapper.toDto(majorRepository.save(major));
     }
 
-    public Major findById(Long id) {
+    public MajorDTO getMajor(Long id) {
         return majorRepository.findById(id)
+                .map(mapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Major not found"));
     }
 
-    public Major create(Major major) {
-        return majorRepository.save(major);
-    }
-
-    public Major update(Long id, Major updatedMajor) {
-        Major existing = findById(id);
-        existing.setName(updatedMajor.getName());
-        return majorRepository.save(existing);
+    public List<MajorDTO> getAllMajors() {
+        return majorRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
     public void delete(Long id) {

@@ -2,6 +2,9 @@ package com.academix.curriculumservice.service;
 
 import com.academix.curriculumservice.dao.entity.Semester;
 import com.academix.curriculumservice.dao.repository.SemesterRepository;
+import com.academix.curriculumservice.service.dto.semester.CreateSemesterRequest;
+import com.academix.curriculumservice.service.dto.semester.SemesterDTO;
+import com.academix.curriculumservice.service.mapper.SemesterMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,26 +13,26 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SemesterService {
-    private final SemesterRepository semesterRepository;
 
-    public List<Semester> findAll() {
-        return semesterRepository.findAll();
+    private final SemesterRepository semesterRepository;
+    private final SemesterMapper mapper;
+
+    public SemesterDTO createSemester(CreateSemesterRequest request) {
+        Semester semester = mapper.fromCreateRequest(request);
+        return mapper.toDto(semesterRepository.save(semester));
     }
 
-    public Semester findById(Long id) {
+    public SemesterDTO getSemester(Long id) {
         return semesterRepository.findById(id)
+                .map(mapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Semester not found"));
     }
 
-    public Semester create(Semester semester) {
-        return semesterRepository.save(semester);
-    }
-
-    public Semester update(Long id, Semester updatedSemester) {
-        Semester existing = findById(id);
-        existing.setName(updatedSemester.getName());
-        existing.setMajor(updatedSemester.getMajor());
-        return semesterRepository.save(existing);
+    public List<SemesterDTO> getAllSemesters() {
+        return semesterRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
     public void delete(Long id) {
