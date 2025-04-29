@@ -42,9 +42,6 @@ public class Homework {
     private Long studentId;
 
     @Column
-    private Long courseId;
-
-    @Column
     private Long lessonId;
 
     @Column
