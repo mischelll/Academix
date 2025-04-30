@@ -21,7 +21,7 @@ public class MajorService {
     private final MajorRepository majorRepository;
     private final MajorMapper mapper;
 
-    public MajorDTO createMajor(CreateMajorRequest request) {
+    public MajorDTO create(CreateMajorRequest request) {
         Major major = mapper.fromCreateRequest(request);
         return mapper.toDto(majorRepository.save(major));
     }

@@ -2,6 +2,8 @@ package com.academix.curriculumservice.web;
 
 import com.academix.curriculumservice.dao.entity.Major;
 import com.academix.curriculumservice.service.MajorService;
+import com.academix.curriculumservice.service.dto.major.CreateMajorRequest;
+import com.academix.curriculumservice.service.dto.major.MajorDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +29,15 @@ public class CurriculumController {
     }
 
     @GetMapping("/majors")
-    public ResponseEntity<List<Major>> getMajors() {
+    public ResponseEntity<List<MajorDTO>> getMajors() {
         logger.info("getMajors");
-        return ResponseEntity.ok(majorService.findAll());
+        return ResponseEntity.ok(majorService.getAllMajors());
     }
 
     @PostMapping("/majors")
-    public ResponseEntity<Major> createMajor(@RequestBody Major major) {
+    public ResponseEntity<MajorDTO> createMajor(@RequestBody CreateMajorRequest createMajorRequest) {
         logger.info("createMajor");
         return ResponseEntity.created(URI.create("/api/curriculum/majors"))
-                .body(majorService.create(major));
+                .body(majorService.create(createMajorRequest));
     }
 }

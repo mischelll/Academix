@@ -1,4 +1,4 @@
 package com.academix.curriculumservice.service.dto.major;
 
-public class CreateMajorRequest {
+public record CreateMajorRequest(String majorName) {
 }

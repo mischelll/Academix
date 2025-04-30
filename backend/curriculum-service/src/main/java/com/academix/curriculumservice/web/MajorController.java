@@ -17,7 +17,7 @@ public class MajorController {
 
     @PostMapping
     public MajorDTO createMajor(@RequestBody CreateMajorRequest request) {
-        return service.createMajor(request);
+        return service.create(request);
     }
 
     @GetMapping("/{id}")

@@ -1,4 +1,4 @@
 package com.academix.curriculumservice.service.dto.major;
 
-public class MajorDTO {
+public record MajorDTO(Long id, String name, String description) {
 }
