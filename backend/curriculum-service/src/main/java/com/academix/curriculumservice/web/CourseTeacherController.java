@@ -1,6 +1,5 @@
 package com.academix.curriculumservice.web;
 
-import com.academix.curriculumservice.dao.entity.CourseTeacher;
 import com.academix.curriculumservice.service.CourseTeacherService;
 import com.academix.curriculumservice.service.dto.course_teacher.AssignTeacherCourseReques;
 import com.academix.curriculumservice.service.dto.course_teacher.CourseTeacherDTO;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/course-teachers")
+@RequestMapping("/api/curriculum/course-teachers")
 public class CourseTeacherController {
     private final CourseTeacherService service;
 
