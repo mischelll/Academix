@@ -5,6 +5,7 @@ import com.academix.curriculumservice.service.CourseStudentService;
 import com.academix.curriculumservice.service.dto.course_student.AssignStudentCourseRequest;
 import com.academix.curriculumservice.service.dto.course_student.CourseStudentDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CourseStudentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public ResponseEntity<CourseStudentDTO> create(@RequestBody AssignStudentCourseRequest assignStudentCourseRequest) {
         return ResponseEntity.ok(service.assignStudent(assignStudentCourseRequest));
     }
@@ -30,6 +32,7 @@ public class CourseStudentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

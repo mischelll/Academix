@@ -4,6 +4,7 @@ import com.academix.curriculumservice.dao.entity.Semester;
 import com.academix.curriculumservice.service.SemesterService;
 import com.academix.curriculumservice.service.dto.semester.CreateSemesterRequest;
 import com.academix.curriculumservice.service.dto.semester.SemesterDTO;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class SemesterController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public SemesterDTO createSemester(@RequestBody CreateSemesterRequest request) {
         return semesterService.createSemester(request);
     }
@@ -34,6 +36,7 @@ public class SemesterController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteSemester(@PathVariable Long id) {
         semesterService.delete(id);
     }

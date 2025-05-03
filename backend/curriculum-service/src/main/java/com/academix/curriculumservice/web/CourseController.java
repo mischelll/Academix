@@ -4,6 +4,7 @@ import com.academix.curriculumservice.dao.entity.Course;
 import com.academix.curriculumservice.service.CourseService;
 import com.academix.curriculumservice.service.dto.course.CourseDTO;
 import com.academix.curriculumservice.service.dto.course.CreateCourseRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class CourseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public CourseDTO createCourse(@RequestBody CreateCourseRequest createCourseRequest) {
         return courseService.create(createCourseRequest);
     }
@@ -38,6 +40,7 @@ public class CourseController {
 //    }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public void deleteCourse(@PathVariable Long id) {
         courseService.delete(id);
     }
