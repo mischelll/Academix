@@ -6,54 +6,52 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import Semester from "./Semester";
 
 function CurriculumNavigator() {
     const { majorId, semesterId, courseId } = useParams();
 
+    const breadcrumbs = [{ label: "Majors", to: "/curriculum/majors" }];
+
+    if (majorId) {
+      breadcrumbs.push({
+        label: `Major ${majorId}`,
+        to: `/curriculum/majors/${majorId}`
+      });
+      breadcrumbs.push({
+        label: "Semesters",
+        to: `/curriculum/majors/${majorId}/semesters`
+      });
+    }
+
+    if (semesterId) {
+      breadcrumbs.push({
+        label: `Semester ${semesterId}`,
+        to: `/curriculum/semesters/${semesterId}/courses`
+      });
+    }
+
+    if (courseId) {
+      breadcrumbs.push({
+        label: `Course ${courseId}`,
+        to: `/curriculum/courses/${courseId}/lessons`
+      });
+    }
+
     return (
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-            <Link to="/curriculum/majors">Majors</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-  
-          {majorId && (
-            <>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
+      <div className="overflow-x-auto whitespace-nowrap">
+        <Breadcrumb>
+          <BreadcrumbList>
+            {breadcrumbs.map((crumb, index) => (
+              <BreadcrumbItem key={crumb.to}>
                 <BreadcrumbLink asChild>
-                  <Link to={`/curriculum/majors/${majorId}/semesters`}><Semester/></Link>
+                  <Link to={crumb.to}>{crumb.label}</Link>
                 </BreadcrumbLink>
+                {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
               </BreadcrumbItem>
-            </>
-          )}
-  
-          {semesterId && (
-            <>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to={`/curriculum/semesters/${semesterId}/courses`}>Courses</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </>
-          )}
-  
-          {courseId && (
-            <>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to={`/curriculum/courses/${courseId}/lessons`}>Lessons</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </>
-          )}
-        </BreadcrumbList>
-      </Breadcrumb>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
     );
 }
 

@@ -16,7 +16,7 @@ export default function Course() {
 
   return (
     <ul>
-      {courses.map((course: Course) => (
+      {courses?.map((course: Course) => (
         <li key={course.id}>{course.name}</li>
       ))}
     </ul>
