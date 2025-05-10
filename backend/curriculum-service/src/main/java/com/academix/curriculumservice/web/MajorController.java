@@ -27,6 +27,11 @@ public class MajorController {
         return service.getMajor(id);
     }
 
+    @GetMapping("/{id}/semesters")
+    public MajorDTO getMajorSemesters(@PathVariable Long id) {
+        return service.getMajor(id);
+    }
+
     @GetMapping
     public List<MajorDTO> getAllMajors() {
         return service.getAllMajors();

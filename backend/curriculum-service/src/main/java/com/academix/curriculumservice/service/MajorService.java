@@ -19,6 +19,7 @@ public class MajorService {
     private static Logger logger = LoggerFactory.getLogger(MajorService.class);
 
     private final MajorRepository majorRepository;
+    private final SemesterService semesterService;
     private final MajorMapper mapper;
 
     public MajorDTO create(CreateMajorRequest request) {
@@ -33,6 +34,13 @@ public class MajorService {
     }
 
     public List<MajorDTO> getAllMajors() {
+        return majorRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+    }
+
+    public List<MajorDTO> getAllMajorSemesters(Long majorId) {
         return majorRepository.findAll()
                 .stream()
                 .map(mapper::toDto)

@@ -1,6 +1,5 @@
 package com.academix.curriculumservice.web;
 
-import com.academix.curriculumservice.dao.entity.Course;
 import com.academix.curriculumservice.service.CourseService;
 import com.academix.curriculumservice.service.dto.course.CourseDTO;
 import com.academix.curriculumservice.service.dto.course.CreateCourseRequest;
@@ -34,10 +33,10 @@ public class CourseController {
         return courseService.create(createCourseRequest);
     }
 
-//    @PutMapping("/{id}")
-//    public CourseDTO updateCourse(@PathVariable Long id, @RequestBody Course course) {
-//        return courseService.update(id, course);
-//    }
+    @GetMapping("/semesters/{semesterId}/courses")
+    public List<CourseDTO> getCoursesForSemester(@PathVariable Long semesterId) {
+        return courseService.getAllCoursesBySemester(semesterId);
+    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
