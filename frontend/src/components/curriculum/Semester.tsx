@@ -8,7 +8,7 @@ export type Semester = {
 
 function Semester() {
 const { majorId } = useParams();
-const { data: semesters, isLoading } = useSemesters(majorId!);
+const { data: semesters, isLoading } = useSemesters(+majorId!);
 
 if (isLoading) return <p>Loading...</p>;
 
