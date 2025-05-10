@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/curriculum/courses")
+@RequestMapping("/api/curriculum")
 public class CourseController {
     private final CourseService courseService;
 
@@ -17,17 +17,17 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping
+    @GetMapping("/courses")
     public List<CourseDTO> getAllCourses() {
         return courseService.getAllCourses();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/courses/{id}")
     public CourseDTO getCourse(@PathVariable Long id) {
         return courseService.getById(id);
     }
 
-    @PostMapping
+    @PostMapping("/courses")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public CourseDTO createCourse(@RequestBody CreateCourseRequest createCourseRequest) {
         return courseService.create(createCourseRequest);
@@ -38,7 +38,7 @@ public class CourseController {
         return courseService.getAllCoursesBySemester(semesterId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/courses/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public void deleteCourse(@PathVariable Long id) {
         courseService.delete(id);
