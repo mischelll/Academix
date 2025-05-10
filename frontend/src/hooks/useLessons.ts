@@ -4,6 +4,6 @@ import apiClient from "@/api/apiClient";
 export function useLessons(lessonId: number) {
   return useQuery({
     queryKey: ["lessons"],
-    queryFn: () => apiClient.get(`/api/curriculum/majors/${lessonId}/lessons`).then(res => res.data),
+    queryFn: () => apiClient.get(`/curriculum/majors/${lessonId}/lessons`).then(res => res.data),
   });
 }

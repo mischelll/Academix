@@ -4,6 +4,6 @@ import apiClient from "@/api/apiClient";
 export function useMajors() {
   return useQuery({
     queryKey: ["majors"],
-    queryFn: () => apiClient.get("/api/curriculum/majors").then(res => res.data),
+    queryFn: () => apiClient.get("/curriculum/majors").then(res => res.data),
   });
 }

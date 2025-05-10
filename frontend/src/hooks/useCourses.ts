@@ -5,7 +5,7 @@ export function useCourses(semesterId: number) {
   return useQuery({
     queryKey: ["courses", semesterId],
     queryFn: () =>
-      apiClient.get(`/api/curriculum/semesters/${semesterId}/courses`).then(res => res.data),
+      apiClient.get(`/curriculum/semesters/${semesterId}/courses`).then(res => res.data),
     enabled: !!semesterId,
   });
 }
