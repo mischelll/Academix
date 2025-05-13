@@ -21,7 +21,7 @@ public class Semester {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column
     private String name;
 
     @ManyToOne(targetEntity = Major.class)
