@@ -12,7 +12,7 @@ export const fetchSemesters = async () => {
   return res.data;
 };
 
-export const fetchSemestersByMajor = async () => {
-  const res = await apiClient.get(apiUrl + "/curriculum/current");
-  return res.data;
-};
+export async function fetchSemestersByMajor(majorId: number) {
+  const response = await apiClient.get(`/curriculum/majors/${majorId}/semesters`);
+  return response.data;
+}
