@@ -16,6 +16,7 @@ import {
 import { fetchMajors } from "@/api/majors";
 import { fetchSemestersByMajor } from "@/api/semesters";
 import { fetchCoursesBySemester } from "@/api/courses";
+import { fetchLessonsByCourse } from "@/api/lessons";
 
 type Major = {
   id: number;
@@ -36,9 +37,21 @@ type Course = {
   semesterId: number;
 };
 
+type Lesson = {
+  id: number;
+  title: string;
+  courseId: number;
+};
+
+type Teacher = {
+  id: number;
+  name: string;
+};
+
 export default function Curriculum() {
   const [selectedMajorId, setSelectedMajorId] = useState<number | null>(null);
   const [selectedSemesterId, setSelectedSemesterId] = useState<number | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("major");
 
   const { data: majors = [] } = useQuery<Major[]>({
@@ -56,6 +69,18 @@ export default function Curriculum() {
     queryKey: ["courses", selectedSemesterId],
     queryFn: () => fetchCoursesBySemester(selectedSemesterId!),
     enabled: !!selectedSemesterId && activeTab === "courses"
+  });
+
+  const { data: lessons = [] } = useQuery<Lesson[]>({
+    queryKey: ["lessons", selectedCourseId],
+    queryFn: () => fetchLessonsByCourse(selectedCourseId!),
+    enabled: !!selectedCourseId && activeTab === "lessons"
+  });
+  
+  const { data: teacher } = useQuery<Teacher>({
+    queryKey: ["teacher", selectedCourseId],
+    queryFn: () => fetchAssignedTeacher(selectedCourseId!),
+    enabled: !!selectedCourseId && activeTab === "lessons"
   });
 
   useEffect(() => {
@@ -76,6 +101,7 @@ export default function Curriculum() {
           <TabsTrigger value="major">Majors</TabsTrigger>
           <TabsTrigger value="semesters" disabled={!selectedMajorId}>Semesters</TabsTrigger>
           <TabsTrigger value="courses" disabled={!selectedSemesterId}>Courses</TabsTrigger>
+          <TabsTrigger value="lessons" disabled={!selectedCourseId}>Lessons</TabsTrigger>
         </TabsList>
 
         <TabsContent value="major" className="mt-4">
@@ -109,7 +135,7 @@ export default function Curriculum() {
         <TabsContent value="courses" className="mt-4">
           <div className="grid grid-cols-2 gap-4">
             {courses.map((course) => (
-              <Card key={course.id}>
+              <Card key={course.id} className={`cursor-pointer ${selectedCourseId === course.id ? "ring-2 ring-primary" : ""}`} onClick={() => setSelectedCourseId(course.id)}>
                 <CardHeader>
                   <CardTitle>{course.name}</CardTitle>
                 </CardHeader>
@@ -118,6 +144,26 @@ export default function Curriculum() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="lessons" className="mt-4">
+          <div className="grid grid-cols-2 gap-4">
+            {lessons.map((lesson) => (
+              <Card key={lesson.id}>
+                <CardHeader>
+                  <CardTitle>{lesson.title}</CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+            {teacher && (
+              <Card className="col-span-2">
+                <CardHeader>
+                  <CardTitle>Assigned Teacher</CardTitle>
+                  <CardDescription>{teacher.name}</CardDescription>
+                </CardHeader>
+              </Card>
+            )}
           </div>
         </TabsContent>
       </Tabs>
