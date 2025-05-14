@@ -1,6 +1,5 @@
 package com.academix.curriculumservice.dao.repository;
 
-import com.academix.curriculumservice.dao.entity.CourseStudent;
 import com.academix.curriculumservice.dao.entity.CourseTeacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 

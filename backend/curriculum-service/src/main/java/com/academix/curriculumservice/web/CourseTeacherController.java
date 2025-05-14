@@ -29,6 +29,11 @@ public class CourseTeacherController {
         return ResponseEntity.ok(service.getAllAssignments());
     }
 
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<CourseTeacherDTO>> findById(@PathVariable Long courseId) {
+        return ResponseEntity.ok(service.findAllTeachersByCourse(courseId));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

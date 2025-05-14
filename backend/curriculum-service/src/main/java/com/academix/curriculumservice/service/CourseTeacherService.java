@@ -36,5 +36,14 @@ public class CourseTeacherService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    public List<CourseTeacherDTO> findAllTeachersByCourse(Long courseId) {
+        //get teacher from user-service by id
+        return repository.findByCourseId(courseId)
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+
+    }
 }
 
