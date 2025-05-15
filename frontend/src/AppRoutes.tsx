@@ -6,10 +6,6 @@ import { useEffect } from "react";
 import { setNavigator } from "./api/navigation";
 import Homework from "./components/homework/Homework";
 import Home from "./components/Home";
-import Major from "./components/curriculum/Major";
-import Semester from "./components/curriculum/Semester";
-import Course from "./components/curriculum/Course";
-import Lesson from "./components/curriculum/Lesson";
 import Curriculum from "./components/curriculum/Curriculum";
 
 export default function AppRoutes() {

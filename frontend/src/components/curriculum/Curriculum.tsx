@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/card";
 import { fetchMajors } from "@/api/majors";
 import { fetchSemestersByMajor } from "@/api/semesters";
-import { fetchCoursesBySemester } from "@/api/courses";
+import { fetchAssignedTeacher, fetchCoursesBySemester } from "@/api/courses";
 import { fetchLessonsByCourse } from "@/api/lessons";
+import CountdownTimer from "./utils/CountdownTimer";
 
 type Major = {
   id: number;
@@ -90,6 +91,7 @@ export default function Curriculum() {
     }
   }, [majors, selectedMajorId]);
 
+
   return (
     <>
       <Tabs
@@ -154,6 +156,17 @@ export default function Curriculum() {
                 <CardHeader>
                   <CardTitle>{lesson.title}</CardTitle>
                 </CardHeader>
+                <CardContent>
+                  <CountdownTimer
+                    onExpire={() => console.log(`Timer expired for lesson: ${lesson.title}`)}
+                  />
+                  <button
+                    className="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
+                    onClick={() => console.log(`Upload clicked for lesson ${lesson.id}`)}
+                  >
+                    Upload Homework
+                  </button>
+                </CardContent>
               </Card>
             ))}
             {teacher && (
