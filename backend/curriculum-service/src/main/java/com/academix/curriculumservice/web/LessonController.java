@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/curriculum/lessons")
+@RequestMapping("/api/curriculum")
 public class LessonController {
 
     private final LessonService lessonService;
@@ -29,7 +29,7 @@ public class LessonController {
         return lessonService.getLesson(id);
     }
 
-    @GetMapping
+    @GetMapping("/lessons")
     public List<LessonDTO> getAllLessons() {
         return lessonService.getAllLessons();
     }

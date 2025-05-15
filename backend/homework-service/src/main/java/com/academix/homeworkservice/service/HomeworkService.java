@@ -35,7 +35,6 @@ public class HomeworkService {
     public Homework createHomework (HomeworkController.HomeworkDTO homeworkDTO) {
         logger.info("Creating a new homework with key={}, studentId={}", homeworkDTO.fileKey(), homeworkDTO.studentId());
         Homework homework = Homework.builder()
-                .courseId(1L)
                 .credits(2L)
                 .deadline(LocalDateTime.now().plusDays(7))
                 .description("This is a test homework")
