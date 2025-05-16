@@ -4,6 +4,7 @@ public record LessonDTO(
         Long id,
         String title,
         String description,
-        Long courseId
+        Long courseId,
+        Long endTimeMs
 ) {
 }
