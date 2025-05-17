@@ -11,12 +11,22 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate.format_sql: true
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+cloud:
+  aws:
+    region: eu-west-1
+    s3:
+      bucket: academix-s3
+    credentials:
+      access-key:
+      secret-key:
 
 jwt:
   secret: ${JWT_SECRET}
+
+api:
+  internalApiKey: ${INTERNAL_API_KEY}

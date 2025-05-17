@@ -8,9 +8,16 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
     properties:
         hibernate.format_sql: true
 server:
   port: 8083
+
+services:
+  homework:
+    url: http://localhost:8082/api
+
+api:
+  internalApiKey: ${INTERNAL_API_KEY}
