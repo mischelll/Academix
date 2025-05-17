@@ -1,9 +1,7 @@
 package com.academix.homeworkservice.web;
 
-import com.academix.homeworkservice.dao.entity.Homework;
 import com.academix.homeworkservice.service.HomeworkService;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import com.academix.homeworkservice.service.dto.HomeworkMetaDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/homeworks")
@@ -38,6 +37,18 @@ public class HomeworkController {
     public ResponseEntity<Page<com.academix.homeworkservice.dao.entity.Homework>> getHomeworksForStudent(@PathVariable Long studentId) {
         logger.info("getHomeworksForStudent");
         return ResponseEntity.ok(homeworkService.getAllHomeworksForStudent(studentId));
+    }
+
+    @GetMapping("/internal/lessons/{lessonId}")
+    public ResponseEntity<HomeworkMetaDTO> getHomeworkForLesson(@PathVariable Long lessonId) {
+        logger.info("getHomeworkForLesson");
+        return ResponseEntity.ok(homeworkService.getHomeworkByLessonId(lessonId));
+    }
+
+    @GetMapping("/internal/lessons/batch")
+    public ResponseEntity<List<HomeworkMetaDTO>> getHomeworkForLessons(@RequestParam List<Long> lessonIds) {
+        logger.info("getHomeworkForLessons");
+        return ResponseEntity.ok(homeworkService.getHomeworkByLessonIds(lessonIds));
     }
 
     @PostMapping

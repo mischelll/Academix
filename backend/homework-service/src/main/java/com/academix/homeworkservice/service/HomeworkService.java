@@ -3,7 +3,7 @@ package com.academix.homeworkservice.service;
 import com.academix.homeworkservice.dao.entity.Homework;
 import com.academix.homeworkservice.dao.entity.HomeworkStatus;
 import com.academix.homeworkservice.dao.repository.HomeworkRepository;
-import com.academix.homeworkservice.service.apiclients.CurriculumClient;
+import com.academix.homeworkservice.service.dto.HomeworkMetaDTO;
 import com.academix.homeworkservice.web.HomeworkController;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,13 +32,10 @@ public class HomeworkService {
     private String region;
 
     private final HomeworkRepository homeworkRepository;
-    private final CurriculumClient curriculumClient;
 
     @Transactional
-    public Homework createHomework (HomeworkController.HomeworkDTO homeworkDTO) {
+    public Homework createHomework(HomeworkController.HomeworkDTO homeworkDTO) {
         logger.info("Creating a new homework with key={}, studentId={}", homeworkDTO.fileKey(), homeworkDTO.studentId());
-        CurriculumClient.LessonDTO lesson = curriculumClient.getLesson(homeworkDTO.lessonId());
-        if(lesson == null) {}
         Homework homework = Homework.builder()
                 .credits(2L)
                 .deadline(LocalDateTime.now().plusDays(7))
@@ -53,11 +53,33 @@ public class HomeworkService {
         return homeworkRepository.save(homework);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<Homework> getAllHomeworksForStudent(Long studentId) {
         logger.info("Retrieving all homeworks for studentId={}", studentId);
         //TODO: refactor to accept pageable from param
         //PageRequest pageRequest = new PageRequest(0, 20);
         return homeworkRepository.findAllByStudentId(studentId, Pageable.unpaged());
+    }
+
+    @Transactional(readOnly = true)
+    public HomeworkMetaDTO getHomeworkByLessonId(Long lessonId) {
+        Homework byLessonId = homeworkRepository.findByLessonIdEquals(lessonId);
+
+        return new HomeworkMetaDTO(
+                byLessonId.getId(),
+                byLessonId.getLessonId(),
+                byLessonId.getStudentId(),
+                byLessonId.getEndDate().toInstant(ZoneOffset.UTC).toEpochMilli()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<HomeworkMetaDTO> getHomeworkByLessonIds(List<Long> lessonIds) {
+        return homeworkRepository.findByLessonIdIn(lessonIds).stream().map(hw -> new HomeworkMetaDTO(
+                hw.getId(),
+                hw.getLessonId(),
+                hw.getStudentId(),
+                hw.getEndDate().toInstant(ZoneOffset.UTC).toEpochMilli()
+        )).toList();
     }
 }
