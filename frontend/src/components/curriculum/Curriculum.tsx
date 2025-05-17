@@ -42,7 +42,7 @@ type Lesson = {
   id: number;
   title: string;
   courseId: number;
-  endTime: number;
+  endTimeMs: number;
 };
 
 type Teacher = {
@@ -83,7 +83,7 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
       </CardHeader>
       <CardContent>
         <CountdownTimer
-          duration={lesson.endTime - Date.now()}
+          duration={lesson.endTimeMs - Date.now()}
           onExpire={() =>
             console.log(`Timer expired for lesson: ${lesson.title}`)
           }
