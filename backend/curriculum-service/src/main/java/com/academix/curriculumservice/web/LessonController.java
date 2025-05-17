@@ -24,7 +24,7 @@ public class LessonController {
         return lessonService.createLesson(request);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/lessons/{id}")
     public LessonDTO getLesson(@PathVariable Long id) {
         return lessonService.getLesson(id);
     }
@@ -39,7 +39,7 @@ public class LessonController {
         return lessonService.getAllLessonsByCourse(courseId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/lessons/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public void deleteLesson(@PathVariable Long id) {
         lessonService.delete(id);
