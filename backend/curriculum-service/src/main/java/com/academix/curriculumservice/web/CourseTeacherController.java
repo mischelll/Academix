@@ -40,4 +40,9 @@ public class CourseTeacherController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/internal/teachers/check")
+    public boolean isTeacherOfCourse(@RequestParam Long userId, @RequestParam Long lessonId) {
+        return service.isTeacherForLesson(userId, lessonId);
+    }
 }

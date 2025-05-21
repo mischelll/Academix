@@ -18,9 +18,9 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private long jwtExpirationMs;
 
-    public String generateToken(Long userId) {
+    public String generateToken(String userEmail) {
         return Jwts.builder()
-                .setSubject(userId.toString())
+                .setSubject(userEmail)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)

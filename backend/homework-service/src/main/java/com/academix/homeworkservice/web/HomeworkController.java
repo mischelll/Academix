@@ -5,10 +5,12 @@ import com.academix.homeworkservice.service.dto.HomeworkMetaDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -57,5 +59,12 @@ public class HomeworkController {
         com.academix.homeworkservice.dao.entity.Homework homework1 = homeworkService.createHomework(homework);
         return ResponseEntity.created(URI.create("/api/homeworks"))
                 .body(homework1);
+    }
+
+    @GetMapping("/{lessonId}/download-url")
+    public ResponseEntity<String> getDownloadUrl(@PathVariable Long lessonId, Principal principal) {
+        return ResponseEntity
+                .status(HttpStatusCode.valueOf(200))
+                .body(homeworkService.getDownloadUrl(lessonId, principal));
     }
 }

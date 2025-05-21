@@ -1,13 +1,17 @@
 package com.academix.curriculumservice.service;
 
+import com.academix.curriculumservice.dao.entity.Course;
 import com.academix.curriculumservice.dao.entity.CourseTeacher;
+import com.academix.curriculumservice.dao.entity.Lesson;
 import com.academix.curriculumservice.dao.repository.CourseTeacherRepository;
+import com.academix.curriculumservice.dao.repository.LessonRepository;
 import com.academix.curriculumservice.service.dto.course_teacher.AssignTeacherCourseRequest;
 import com.academix.curriculumservice.service.dto.course_teacher.CourseTeacherDTO;
 import com.academix.curriculumservice.service.mapper.CourseTeacherMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +23,7 @@ public class CourseTeacherService {
     private final static Logger LOGGER = LoggerFactory.getLogger(CourseTeacherService.class);
 
     private final CourseTeacherRepository repository;
+    private final LessonRepository lessonRepository;
     private final CourseTeacherMapper mapper;
 
     public CourseTeacherDTO assignTeacher(AssignTeacherCourseRequest request) {
@@ -44,6 +49,13 @@ public class CourseTeacherService {
                 .map(mapper::toDto)
                 .toList();
 
+    }
+
+    public boolean isTeacherForLesson(Long userId, Long lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        Course course = lesson.getCourse();
+        return repository.existsByCourseAndTeacherId(course, userId);
     }
 }
 

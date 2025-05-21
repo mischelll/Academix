@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,10 +31,27 @@ public class SecurityConfig {
         this.oAuth2LoginFailureHandler = oAuth2LoginFailureHandler;
     }
 
+    @Bean
+    @Order(1)
+    public SecurityFilterChain internalApiChain(HttpSecurity http, InternalApiAuthFilter internalApiAuthFilter) throws Exception {
+        http
+                .securityMatcher("/api/homeworks/internal/**")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/homeworks/internal/**").hasAuthority("INTERNAL")
+                        .anyRequest().permitAll()
+                )
+                .addFilterBefore(internalApiAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
 
     @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
         return http
+                .securityMatcher(request -> !request.getRequestURI().startsWith("/api/users/internal/"))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -68,5 +86,10 @@ public class SecurityConfig {
                         new SecretKeySpec(secret.getBytes(), "HmacSHA256")
                 )
                 .build();
+    }
+
+    @Bean
+    public InternalApiAuthFilter internalApiAuthFilter(@Value("${api.internalApiKey}") String expectedKey) {
+        return new InternalApiAuthFilter(expectedKey);
     }
 }

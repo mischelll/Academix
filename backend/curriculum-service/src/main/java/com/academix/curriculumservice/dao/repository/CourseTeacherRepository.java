@@ -1,5 +1,6 @@
 package com.academix.curriculumservice.dao.repository;
 
+import com.academix.curriculumservice.dao.entity.Course;
 import com.academix.curriculumservice.dao.entity.CourseTeacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,6 @@ public interface CourseTeacherRepository extends JpaRepository<CourseTeacher, Lo
     List<CourseTeacher> findByCourseId(Long courseId);
 
     List<CourseTeacher> findByTeacherId(Long teacherId);
+
+    Boolean existsByCourseAndTeacherId(Course course, Long teacherId);
 }

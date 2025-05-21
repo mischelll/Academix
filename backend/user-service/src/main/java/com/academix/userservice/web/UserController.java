@@ -4,6 +4,7 @@ import com.academix.userservice.dao.Role;
 import com.academix.userservice.dao.User;
 import com.academix.userservice.repository.UserRepository;
 import com.academix.userservice.service.UserService;
+import com.academix.userservice.service.dto.UserMetaDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,9 @@ public class UserController {
 
 
     @GetMapping("/protected/me")
-    public ResponseEntity<UserDTO> getProtectedMe(@AuthenticationPrincipal String userId) {
+    public ResponseEntity<UserDTO> getProtectedMe(@AuthenticationPrincipal String email) {
         logger.info("GET /protected/me");
-        Optional<User> byId = userRepository.findById(Long.valueOf(userId));
+        Optional<User> byId = userRepository.findByEmail(email);
         if (byId.isPresent()) {
             User user = byId.get();
             return ResponseEntity.ok(new UserDTO(
@@ -55,5 +56,12 @@ public class UserController {
     public ResponseEntity<User> updateUserState(@RequestBody UserUpdateDTO userDTO) {
         logger.info("POST /user-state");
         return ResponseEntity.ok(userService.updateUser(userDTO));
+    }
+
+    @GetMapping("/internal/me")
+    public ResponseEntity<UserMetaDTO> getInternaldMe(@RequestParam String email) {
+        logger.info("GET /internal/me");
+        UserMetaDTO userMeta = userService.getUserMeta(email);
+        return ResponseEntity.ok(userMeta);
     }
 }

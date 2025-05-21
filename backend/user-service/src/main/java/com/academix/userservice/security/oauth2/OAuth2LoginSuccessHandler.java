@@ -36,7 +36,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         User user = handleUserAuthentication(oAuth2User);
 
-        String jwt = tokenProvider.generateToken(user.getId());
+        String jwt = tokenProvider.generateToken(user.getEmail());
         RefreshToken refreshToken = refreshService.createRefreshToken(user.getId());
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())

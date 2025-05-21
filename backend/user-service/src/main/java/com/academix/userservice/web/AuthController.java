@@ -28,7 +28,7 @@ public class AuthController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String token = jwtTokenProvider.generateToken(user.getId());
+                    String token = jwtTokenProvider.generateToken(user.getEmail());
                     return ResponseEntity.ok(new RefreshTokenResponse(token, refreshToken));
                 })
                 .orElseThrow(() -> new RuntimeException("Refresh token not found."));
