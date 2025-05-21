@@ -30,3 +30,12 @@ jwt:
 
 api:
   internalApiKey: ${INTERNAL_API_KEY}
+
+services:
+  homework:
+    url: http://localhost:8082/api
+  curriculum:
+    url: http://localhost:8083/api
+  user:
+    url: http://localhost:8081/api
+

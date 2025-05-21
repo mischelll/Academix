@@ -20,7 +20,6 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Applies to internal service calls
     @Bean
     @Order(1)
     public SecurityFilterChain internalApiChain(HttpSecurity http, InternalApiAuthFilter internalApiAuthFilter) throws Exception {

@@ -1,3 +1,4 @@
+import apiClient from "@/api/apiClient";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -13,7 +14,7 @@ import { fetchSemestersByMajor } from "@/api/semesters";
 import { fetchAssignedTeacher, fetchCoursesBySemester } from "@/api/courses";
 import { fetchLessonsByCourse } from "@/api/lessons";
 import CountdownTimer from "./utils/CountdownTimer";
-import { Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { uploadHomework, createHomework } from "@/api/homework";
@@ -53,6 +54,7 @@ type Teacher = {
 function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -73,6 +75,20 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
       alert("❌ Upload failed.");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      const res = await apiClient.get(`/homeworks/${lesson.id}/download-url`);
+      const presignedUrl = res.data;
+      window.open(presignedUrl, "_blank");
+    } catch (err) {
+      console.error("❌ Download failed:", err);
+      alert("❌ Download failed.");
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -100,6 +116,14 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
           className="mt-2"
         >
           <Upload /> {uploading ? "Uploading..." : "Upload"}
+        </Button>
+        <Button
+          onClick={handleDownload}
+          disabled={downloading}
+          className="mt-2"
+        >
+          <Download className="mr-2 h-4 w-4" />
+          {downloading ? "Downloading..." : "Download"}
         </Button>
       </CardContent>
     </Card>

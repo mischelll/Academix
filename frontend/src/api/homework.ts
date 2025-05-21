@@ -43,3 +43,19 @@ export const uploadHomework = async (fileName: string, file: File) => {
 
   return uploadRes.url;
 };
+
+
+export const downloadHomework = async (filePath: string) => {
+  const res = await apiClient.get(apiUrl + "/files/download", {
+    params: { filePath },
+    responseType: 'blob',
+  });
+
+  const url = window.URL.createObjectURL(new Blob([res.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filePath.split('/').pop() || 'homework.pdf');
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
