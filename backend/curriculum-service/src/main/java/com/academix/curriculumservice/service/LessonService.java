@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,8 +60,8 @@ public class LessonService {
         List<Lesson> allByCourse = lessonRepository.findAllByCourse(course);
 
         if (allByCourse.isEmpty()) return new ArrayList<>();
-        List<HomeworkMetaDTO> homeworkMetaByLessonIds = homeworkServiceClient
-                .getHomeworkMetaByLessonIds(allByCourse.stream().map(Lesson::getId).toList());
+        Set<HomeworkMetaDTO> homeworkMetaByLessonIds = homeworkServiceClient
+                .getHomeworkMetaByLessonIds(allByCourse.stream().map(Lesson::getId).collect(Collectors.toSet()));
 
         Map<Long, Long> lessonEndTimeMap = homeworkMetaByLessonIds.stream()
                 .collect(Collectors.toMap(HomeworkMetaDTO::lessonId, HomeworkMetaDTO::endTime));

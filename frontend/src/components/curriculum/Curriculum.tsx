@@ -66,10 +66,9 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
     if (!file) return;
     setUploading(true);
     try {
-      const filePath = await uploadHomework(file.name, file);
-      console.info(filePath);
+      await uploadHomework(file.name, file);
       alert("✅ Upload successful!");
-      await createHomework(user?.id, filePath);
+      await createHomework(user?.id, file.name);
     } catch (err) {
       console.error("❌ Upload failed:", err);
       alert("❌ Upload failed.");

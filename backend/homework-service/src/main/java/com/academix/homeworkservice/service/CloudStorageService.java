@@ -54,7 +54,7 @@ public class CloudStorageService {
     public String generatePresignedGetUrl(String keyName) {
         logger.info("Generating Presigned GET URL for file: {} and bucket: {}", keyName, bucketName);
 
-        try (S3Presigner presigner = S3Presigner.create()) {
+        try (S3Presigner presigner = S3Presigner.builder().region(Region.of(region)).build()) {
 
             GetObjectRequest objectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)

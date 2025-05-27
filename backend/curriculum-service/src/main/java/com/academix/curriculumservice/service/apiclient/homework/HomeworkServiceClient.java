@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import java.util.Set;
 
 @FeignClient(name = "homework-service", url = "${services.homework.url}", configuration = FeignConfig.class)
 public interface HomeworkServiceClient {
@@ -14,5 +14,5 @@ public interface HomeworkServiceClient {
     HomeworkMetaDTO getHomeworkMetaByLessonId(Long lessonId);
 
     @GetMapping("/homeworks/internal/lessons/batch")
-    List<HomeworkMetaDTO> getHomeworkMetaByLessonIds(@RequestParam List<Long> lessonIds);
+    Set<HomeworkMetaDTO> getHomeworkMetaByLessonIds(@RequestParam Set<Long> lessonIds);
 }

@@ -49,7 +49,7 @@ public class HomeworkService {
                 .description("This is a test homework")
                 .endDate(LocalDateTime.now().plusDays(8))
                 .title("This is a test homework")
-                .filePath(String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, homeworkDTO.filePath()))
+                .filePath( homeworkDTO.filePath())
                 .studentId(homeworkDTO.studentId())
                 .lessonId(1L)
                 .status(HomeworkStatus.SUBMITTED)

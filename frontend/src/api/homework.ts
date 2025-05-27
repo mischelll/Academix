@@ -20,7 +20,7 @@ export const createHomework = async (studentId: number | undefined, filePath: st
   return res.data;
 };
 
-export const uploadHomework = async (fileName: string, file: File) => {
+export const uploadHomework = async (fileName: string, file: File): Promise<void> => {
   const getPresignedUrlRes = await apiClient.get(
     apiUrl + "/files/presigned-url",
     {
@@ -40,8 +40,6 @@ export const uploadHomework = async (fileName: string, file: File) => {
   if (!uploadRes.ok) {
     throw new Error("Upload to S3 failed");
   }
-
-  return uploadRes.url;
 };
 
 
