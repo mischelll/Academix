@@ -7,8 +7,12 @@ import com.academix.homeworkservice.service.apiclients.CurriculumClient;
 import com.academix.homeworkservice.service.apiclients.UserServiceClient;
 import com.academix.homeworkservice.service.dto.HomeworkMetaDTO;
 import com.academix.homeworkservice.service.dto.UserMetaDTO;
+import com.academix.homeworkservice.service.kafka.HomeworkEventProducer;
+import com.academix.homeworkservice.service.kafka.event.HomeworkSubmissionEvent;
 import com.academix.homeworkservice.web.HomeworkController;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,17 +45,19 @@ public class HomeworkService {
     private final UserServiceClient userServiceClient;
     private final CurriculumClient curriculumClient;
     private final CloudStorageService cloudStorageService;
+    private final HomeworkEventProducer homeworkEventProducer;
 
     @Transactional
     public Homework createHomework(HomeworkController.HomeworkDTO homeworkDTO) {
         logger.info("Creating a new homework with key={}, studentId={}", homeworkDTO.filePath(), homeworkDTO.studentId());
+
         Homework homework = Homework.builder()
                 .credits(2L)
                 .deadline(LocalDateTime.now().plusDays(7))
                 .description("This is a test homework")
                 .endDate(LocalDateTime.now().plusDays(8))
                 .title("This is a test homework")
-                .filePath( homeworkDTO.filePath())
+                .filePath(homeworkDTO.filePath())
                 .studentId(homeworkDTO.studentId())
                 .lessonId(1L)
                 .status(HomeworkStatus.SUBMITTED)
@@ -57,7 +65,28 @@ public class HomeworkService {
                 .submittedDate(LocalDateTime.now())
                 .build();
 
-        return homeworkRepository.save(homework);
+        Homework createdHomework = homeworkRepository.save(homework);
+        try {
+            HomeworkSubmissionEvent event = new HomeworkSubmissionEvent(
+                    createdHomework.getId(),
+                    createdHomework.getLessonId(),
+                    createdHomework.getStudentId(),
+                    homeworkDTO.filePath(),
+                    Instant.now()
+            );
+
+            JSONObject json = new JSONObject();
+            json.put("homeworkId", event.homeworkId());
+            json.put("lessonId", event.lessonId());
+            json.put("studentId", event.studentId());
+            json.put("filePath", event.filePath());
+            json.put("submittedAt", event.timestamp().toString());
+            homeworkEventProducer.publishHomeworkSubmitted(json);
+        } catch (JSONException e) {
+            logger.error(e.getMessage());
+        }
+
+        return createdHomework;
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +121,7 @@ public class HomeworkService {
 
     public String getDownloadUrl(Long lessonId, Principal principal) {
         Homework homework = homeworkRepository.findByLessonIdEquals(lessonId);
-        if(homework == null) {
+        if (homework == null) {
             throw new RuntimeException("Homework not found");
         }
 

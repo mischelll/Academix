@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: homework-service
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
   datasource:
     url: jdbc:postgresql://localhost:5433/homework_db
     username: admin
@@ -38,4 +44,7 @@ services:
     url: http://localhost:8083/api
   user:
     url: http://localhost:8081/api
+
+topics:
+  homework-submitted: homework.submission
 

@@ -1,0 +1,5 @@
+package com.academix.homeworkservice.service.kafka.event;
+
+import java.time.Instant;
+
+public record HomeworkReviewedEvent(Long homeworkId, Long lessonId, Long grade, Long studentId, Long reviewedBy, Instant timestamp) {}
