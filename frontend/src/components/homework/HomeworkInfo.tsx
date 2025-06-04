@@ -73,7 +73,7 @@ export default function HomeworkInfo() {
           )}
           {uploadError && (
             <p className="text-red-600 mt-2">{uploadError}</p>
-          )} */}
+          )}  */}
         </div>
       </div>
     </div>
