@@ -64,4 +64,11 @@ public class UserController {
         UserMetaDTO userMeta = userService.getUserMeta(email);
         return ResponseEntity.ok(userMeta);
     }
+
+    @GetMapping("/internal/{userId}")
+    public ResponseEntity<UserMetaDTO> getInternaldMe(@PathVariable Long userId) {
+        logger.info("GET /internal/{}" ,userId);
+        UserMetaDTO userMeta = userService.getUserMeta(userId);
+        return ResponseEntity.ok(userMeta);
+    }
 }
