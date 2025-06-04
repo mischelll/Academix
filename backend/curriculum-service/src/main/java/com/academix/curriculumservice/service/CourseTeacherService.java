@@ -5,6 +5,8 @@ import com.academix.curriculumservice.dao.entity.CourseTeacher;
 import com.academix.curriculumservice.dao.entity.Lesson;
 import com.academix.curriculumservice.dao.repository.CourseTeacherRepository;
 import com.academix.curriculumservice.dao.repository.LessonRepository;
+import com.academix.curriculumservice.service.apiclient.user.UserMetaDTO;
+import com.academix.curriculumservice.service.apiclient.user.UserServiceClient;
 import com.academix.curriculumservice.service.dto.course_teacher.AssignTeacherCourseRequest;
 import com.academix.curriculumservice.service.dto.course_teacher.CourseTeacherDTO;
 import com.academix.curriculumservice.service.mapper.CourseTeacherMapper;
@@ -25,6 +27,7 @@ public class CourseTeacherService {
     private final CourseTeacherRepository repository;
     private final LessonRepository lessonRepository;
     private final CourseTeacherMapper mapper;
+    private final UserServiceClient userServiceClient;
 
     public CourseTeacherDTO assignTeacher(AssignTeacherCourseRequest request) {
         CourseTeacher courseTeacher = mapper.fromCreateRequest(request);
@@ -42,12 +45,15 @@ public class CourseTeacherService {
         repository.deleteById(id);
     }
 
-    public List<CourseTeacherDTO> findAllTeachersByCourse(Long courseId) {
-        //get teacher from user-service by id
-        return repository.findByCourseId(courseId)
+    public CourseTeacherDTO findTeacherByCourse(Long courseId) {
+        CourseTeacherDTO courseTeacherDTO = repository.findByCourseId(courseId)
                 .stream()
                 .map(mapper::toDto)
-                .toList();
+                .toList().getFirst();
+        UserMetaDTO userById = userServiceClient.getUserById(courseTeacherDTO.teacherId());
+
+
+        return new CourseTeacherDTO(courseTeacherDTO.id(), courseId, userById.id(),userById.name(), userById.email());
 
     }
 

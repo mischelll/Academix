@@ -63,7 +63,7 @@ public class LessonService {
         Set<HomeworkMetaDTO> homeworkMetaByLessonIds = homeworkServiceClient
                 .getHomeworkMetaByLessonIds(allByCourse.stream().map(Lesson::getId).collect(Collectors.toSet()));
 
-        Map<Long, Long> lessonEndTimeMap = homeworkMetaByLessonIds.stream()
+        Map<Long, Long> lessonEndTimeMap = homeworkMetaByLessonIds.stream().distinct()
                 .collect(Collectors.toMap(HomeworkMetaDTO::lessonId, HomeworkMetaDTO::endTime));
 
         return allByCourse.stream()

@@ -50,4 +50,23 @@ public class UserService {
                 .collect(Collectors.toSet())
         );
     }
+
+    @Transactional
+    public UserMetaDTO getUserMeta(Long userId) {
+        logger.info("Getting user meta for id: {}", userId);
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = userOpt.get();
+        return  new UserMetaDTO(
+                user.getId(),
+                user.getFirstName(),
+                user.getEmail(),
+                user.getRoles()
+                        .stream()
+                        .map(rl -> rl.getName().toString())
+                        .collect(Collectors.toSet())
+        );
+    }
 }

@@ -36,9 +36,11 @@ public class SecurityConfig {
     public SecurityFilterChain internalApiChain(HttpSecurity http, InternalApiAuthFilter internalApiAuthFilter) throws Exception {
         http
                 .securityMatcher("/api/homeworks/internal/**")
+                .securityMatcher("/api/curriculum/internal/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/homeworks/internal/**").hasAuthority("INTERNAL")
+                        .requestMatchers("/api/curriculum/internal/**").hasAuthority("INTERNAL")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(internalApiAuthFilter, UsernamePasswordAuthenticationFilter.class);

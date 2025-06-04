@@ -56,16 +56,22 @@ public class HomeworkService {
                 .deadline(LocalDateTime.now().plusDays(7))
                 .description("This is a test homework")
                 .endDate(LocalDateTime.now().plusDays(8))
-                .title("This is a test homework")
+                .title(homeworkDTO.title())
                 .filePath(homeworkDTO.filePath())
                 .studentId(homeworkDTO.studentId())
-                .lessonId(1L)
+                .lessonId(homeworkDTO.lessonId())
                 .status(HomeworkStatus.SUBMITTED)
                 .startDate(LocalDateTime.now())
                 .submittedDate(LocalDateTime.now())
                 .build();
 
         Homework createdHomework = homeworkRepository.save(homework);
+        sendNotificationEvent(homeworkDTO, createdHomework);
+
+        return createdHomework;
+    }
+
+    private void sendNotificationEvent(HomeworkController.HomeworkDTO homeworkDTO, Homework createdHomework) {
         try {
             HomeworkSubmissionEvent event = new HomeworkSubmissionEvent(
                     createdHomework.getId(),
@@ -85,8 +91,6 @@ public class HomeworkService {
         } catch (JSONException e) {
             logger.error(e.getMessage());
         }
-
-        return createdHomework;
     }
 
     @Transactional(readOnly = true)

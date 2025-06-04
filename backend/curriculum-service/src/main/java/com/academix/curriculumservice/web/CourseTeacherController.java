@@ -30,8 +30,8 @@ public class CourseTeacherController {
     }
 
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<List<CourseTeacherDTO>> findById(@PathVariable Long courseId) {
-        return ResponseEntity.ok(service.findAllTeachersByCourse(courseId));
+    public ResponseEntity<CourseTeacherDTO> findById(@PathVariable Long courseId) {
+        return ResponseEntity.ok(service.findTeacherByCourse(courseId));
     }
 
     @DeleteMapping("/{id}")
