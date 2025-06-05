@@ -47,6 +47,12 @@ public class Homework {
     @Column
     private LocalDateTime submittedDate;
 
+    @Column(precision = 1, scale = 2)
+    private Double grade;
+
+    @Column(columnDefinition = "text")
+    private String comment;
+
     @Column(columnDefinition = "TEXT")
     private String filePath;
 
