@@ -31,10 +31,19 @@ export default function HomeworkInfo() {
 
     setUploading(true);
     try {
-      const filePath = await uploadHomework(file.name, file);
-      console.info(filePath)
-      alert("✅ Upload successful!");
-      await createHomework(user?.id, filePath);
+      await uploadHomework(file.name, file);
+      const filePath = `homeworks/${file.name}`;
+      
+      // Note: This component doesn't have lessonId, so we'll need to get it from homework data
+      // For now, using a placeholder lessonId of 1
+      await createHomework(
+        user?.id,
+        1, // lessonId - this should come from the homework data
+        homework?.title || "Homework Assignment", // title
+        `Homework for ${homework?.title || "Assignment"}`, // description
+        filePath,
+        1 // credits
+      );
       alert("✅ Upload successful!");
     } catch (err) {
       console.error("❌ Upload failed:", err);

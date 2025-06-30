@@ -1,6 +1,5 @@
-import apiClient from "@/api/apiClient";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
@@ -14,11 +13,12 @@ import { fetchSemestersByMajor } from "@/api/semesters";
 import { fetchAssignedTeacher, fetchCoursesBySemester } from "@/api/courses";
 import { fetchLessonsByCourse } from "@/api/lessons";
 import CountdownTimer from "./utils/CountdownTimer";
-import { Download, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { uploadHomework, createHomework } from "@/api/homework";
 import { User, useUserStore } from "@/stores/userStore";
+import { toast } from "sonner";
 
 type Major = {
   id: number;
@@ -51,11 +51,11 @@ type Teacher = {
   name: string;
 };
 
-function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
+function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null}) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [downloading, setDownloading] = useState(false);
-
+  const queryClient = useQueryClient();
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       setFile(e.target.files[0]);
@@ -63,33 +63,55 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
   };
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file || !user) return;
     setUploading(true);
+    
     try {
+      // Upload file to S3
       await uploadHomework(file.name, file);
-      alert("✅ Upload successful!");
-      await createHomework(user?.id, file.name);
+      
+      // Create homework record in database
+      const filePath = `homeworks/${file.name}`;
+      await createHomework(
+        user.id,
+        lesson.id, // lessonId
+        lesson.title, // title
+        `Homework for ${lesson.title}`, // description
+        filePath,
+        1 // credits
+      );
+      
+      // Invalidate user homeworks query to refresh assignments list
+      queryClient.invalidateQueries({ queryKey: ["userHomeworks", user.id] });
+      
+      toast.success("Homework uploaded successfully! Check your assignments page.");
+      
+      // Clear the file input
+      setFile(null);
+      const fileInput = document.getElementById(lesson.id + "") as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
+      
     } catch (err) {
       console.error("❌ Upload failed:", err);
-      alert("❌ Upload failed.");
+      toast.error("Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDownload = async () => {
-    setDownloading(true);
-    try {
-      const res = await apiClient.get(`/homeworks/${lesson.id}/download-url`);
-      const presignedUrl = res.data;
-      window.open(presignedUrl, "_blank");
-    } catch (err) {
-      console.error("❌ Download failed:", err);
-      alert("❌ Download failed.");
-    } finally {
-      setDownloading(false);
-    }
-  };
+  // const handleDownload = async () => {
+  //   setDownloading(true);
+  //   try {
+  //     const res = await apiClient.get(`/homeworks/${lesson.id}/download-url`);
+  //     const presignedUrl = res.data;
+  //     window.open(presignedUrl, "_blank");
+  //   } catch (err) {
+  //     console.error("❌ Download failed:", err);
+  //     alert("❌ Download failed.");
+  //   } finally {
+  //     setDownloading(false);
+  //   }
+  // };
 
   return (
     <Card key={lesson.id}>
@@ -116,14 +138,14 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null }) {
         >
           <Upload /> {uploading ? "Uploading..." : "Upload"}
         </Button>
-        <Button
+        {/* <Button
           onClick={handleDownload}
-          disabled={downloading}
+          disabled={downloading || !file}
           className="mt-2"
         >
           <Download className="mr-2 h-4 w-4" />
           {downloading ? "Downloading..." : "Download"}
-        </Button>
+        </Button> */}
       </CardContent>
     </Card>
   );
