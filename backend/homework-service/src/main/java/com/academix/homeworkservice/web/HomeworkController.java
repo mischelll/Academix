@@ -19,7 +19,7 @@ public class HomeworkController {
 
     record Homework(String title, String content) {}
 
-    public record HomeworkDTO(String title, String content, String filePath, Long studentId, Long lessonId) {}
+    public record HomeworkDTO(String title, String content, String filePath, Long studentId, Long lessonId, String description, Long credits) {}
 
     private static final Logger logger = LoggerFactory.getLogger(HomeworkController.class);
 

@@ -75,7 +75,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .roles(Set.of(roleRepository.findByName(RoleEnum.ROLE_STUDENT)))
                 .build();
 
-        // Fetch or create user
         return userRepository.findByEmail(email).orElseGet(() -> userRepository.save(userBuilt));
     }
 }

@@ -52,9 +52,9 @@ public class HomeworkService {
         logger.info("Creating a new homework with key={}, studentId={}", homeworkDTO.filePath(), homeworkDTO.studentId());
 
         Homework homework = Homework.builder()
-                .credits(2L)
+                .credits(homeworkDTO.credits())
                 .deadline(LocalDateTime.now().plusDays(7))
-                .description("This is a test homework")
+                .description(homeworkDTO.description())
                 .endDate(LocalDateTime.now().plusDays(8))
                 .title(homeworkDTO.title())
                 .filePath(homeworkDTO.filePath())

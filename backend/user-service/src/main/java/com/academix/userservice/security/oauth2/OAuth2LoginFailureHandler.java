@@ -19,7 +19,7 @@ public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHan
             throws java.io.IOException {
 
         exception.printStackTrace();
-
-        response.sendRedirect("http://localhost:5173/login?error=" + URLEncoder.encode(exception.getMessage(), StandardCharsets.UTF_8));
+        response.sendRedirect("http://localhost:5173/login?error=" + URLEncoder.encode(exception.getMessage(),
+                StandardCharsets.UTF_8));
     }
 }

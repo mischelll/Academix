@@ -47,4 +47,6 @@ services:
 
 topics:
   homework-submitted: homework.submission
+  homework-reviewed: homework.reviewed
+  homework-reminder: homework.reminder
 

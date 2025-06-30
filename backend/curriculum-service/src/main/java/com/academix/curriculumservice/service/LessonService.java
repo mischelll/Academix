@@ -61,7 +61,10 @@ public class LessonService {
 
         if (allByCourse.isEmpty()) return new ArrayList<>();
         Set<HomeworkMetaDTO> homeworkMetaByLessonIds = homeworkServiceClient
-                .getHomeworkMetaByLessonIds(allByCourse.stream().map(Lesson::getId).collect(Collectors.toSet()));
+                .getHomeworkMetaByLessonIds(allByCourse
+                        .stream()
+                        .map(Lesson::getId)
+                        .collect(Collectors.toSet()));
 
         Map<Long, Long> lessonEndTimeMap = homeworkMetaByLessonIds.stream().distinct()
                 .collect(Collectors.toMap(HomeworkMetaDTO::lessonId, HomeworkMetaDTO::endTime));
@@ -75,7 +78,7 @@ public class LessonService {
                             dto.title(),
                             dto.description(),
                             dto.courseId(),
-                            endTime // ← enrich with fetched endTime
+                            endTime
                     );
                 })
                 .toList();

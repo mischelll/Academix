@@ -3,6 +3,7 @@ package com.academix.homeworkservice.dao.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -47,8 +48,8 @@ public class Homework {
     @Column
     private LocalDateTime submittedDate;
 
-    @Column(precision = 1, scale = 2)
-    private Double grade;
+    @Column(precision = 1)
+    private BigDecimal grade;
 
     @Column(columnDefinition = "text")
     private String comment;

@@ -41,7 +41,8 @@ public class InternalApiAuthFilter extends OncePerRequestFilter {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API Key");
             return;
         }
-        Authentication auth = new UsernamePasswordAuthenticationToken("internal-service", null, List.of(new SimpleGrantedAuthority("INTERNAL")));
+        Authentication auth = new UsernamePasswordAuthenticationToken("internal-service", null,
+                List.of(new SimpleGrantedAuthority("INTERNAL")));
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
     }
