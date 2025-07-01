@@ -45,4 +45,9 @@ public class CourseTeacherController {
     public boolean isTeacherOfCourse(@RequestParam Long userId, @RequestParam Long lessonId) {
         return service.isTeacherForLesson(userId, lessonId);
     }
+
+    @GetMapping("/internal/teachers/{teacherId}/lessons")
+    public ResponseEntity<List<Long>> getTeacherLessonIds(@PathVariable Long teacherId) {
+        return ResponseEntity.ok(service.getTeacherLessonIds(teacherId));
+    }
 }

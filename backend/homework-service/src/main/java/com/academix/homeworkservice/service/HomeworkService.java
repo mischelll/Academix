@@ -5,9 +5,12 @@ import com.academix.homeworkservice.dao.entity.HomeworkStatus;
 import com.academix.homeworkservice.dao.repository.HomeworkRepository;
 import com.academix.homeworkservice.service.apiclients.CurriculumClient;
 import com.academix.homeworkservice.service.apiclients.UserServiceClient;
+import com.academix.homeworkservice.service.dto.GradeHomeworkRequest;
 import com.academix.homeworkservice.service.dto.HomeworkMetaDTO;
+import com.academix.homeworkservice.service.dto.TeacherHomeworkDTO;
 import com.academix.homeworkservice.service.dto.UserMetaDTO;
 import com.academix.homeworkservice.service.kafka.HomeworkEventProducer;
+import com.academix.homeworkservice.service.kafka.event.HomeworkReviewedEvent;
 import com.academix.homeworkservice.service.kafka.event.HomeworkSubmissionEvent;
 import com.academix.homeworkservice.web.HomeworkController;
 import lombok.RequiredArgsConstructor;
@@ -140,5 +143,95 @@ public class HomeworkService {
         }
 
         return cloudStorageService.generatePresignedGetUrl(homework.getFilePath());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeacherHomeworkDTO> getHomeworksForTeacher(Principal principal) {
+        UserMetaDTO teacher = userServiceClient.getUserByEmail(principal.getName());
+        List<Long> teacherLessonIds = curriculumClient.getTeacherLessonIds(teacher.id());
+        
+        if (teacherLessonIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<Homework> teacherHomeworks = homeworkRepository.findByLessonIdIn(teacherLessonIds);
+
+        return teacherHomeworks.stream()
+                .map(homework -> {
+                    UserMetaDTO student = userServiceClient.getUserById(homework.getStudentId());
+
+                    String lessonTitle = "Lesson " + homework.getLessonId();
+                    try {
+                        CurriculumClient.LessonInfo lessonInfo = curriculumClient.getLessonById(homework.getLessonId());
+                        lessonTitle = lessonInfo.title();
+                    } catch (Exception e) {
+                        logger.warn("Could not fetch lesson title for lessonId: {}", homework.getLessonId(), e);
+                    }
+                    
+                    return new TeacherHomeworkDTO(
+                            homework.getId(),
+                            homework.getTitle(),
+                            homework.getDescription(),
+                            homework.getStudentId(),
+                            student.name(),
+                            student.email(),
+                            homework.getLessonId(),
+                            lessonTitle,
+                            homework.getFilePath(),
+                            homework.getSubmittedDate(),
+                            homework.getDeadline(),
+                            homework.getStatus().toString(),
+                            homework.getGrade(),
+                            homework.getComment()
+                    );
+                })
+                .toList();
+    }
+
+    @Transactional
+    public Homework gradeHomework(GradeHomeworkRequest request, Principal principal) {
+        UserMetaDTO teacher = userServiceClient.getUserByEmail(principal.getName());
+        
+        Homework homework = homeworkRepository.findById(request.homeworkId())
+                .orElseThrow(() -> new RuntimeException("Homework not found"));
+
+        if (!curriculumClient.isTeacherOfCourse(teacher.id(), homework.getLessonId())) {
+            throw new AccessDeniedException("You are not authorized to grade this homework");
+        }
+
+        homework.setGrade(request.grade());
+        homework.setComment(request.comment());
+        homework.setStatus(HomeworkStatus.REVIEWED);
+
+        Homework gradedHomework = homeworkRepository.save(homework);
+        
+        // Send notification event
+        sendGradingNotificationEvent(gradedHomework, teacher.id());
+
+        return gradedHomework;
+    }
+
+    private void sendGradingNotificationEvent(Homework homework, Long teacherId) {
+        try {
+            HomeworkReviewedEvent event = new HomeworkReviewedEvent(
+                    homework.getId(),
+                    homework.getLessonId(),
+                    homework.getGrade() != null ? homework.getGrade().longValue() : null,
+                    homework.getStudentId(),
+                    teacherId,
+                    Instant.now()
+            );
+
+            JSONObject json = new JSONObject();
+            json.put("homeworkId", event.homeworkId());
+            json.put("lessonId", event.lessonId());
+            json.put("grade", event.grade());
+            json.put("studentId", event.studentId());
+            json.put("reviewedBy", event.reviewedBy());
+            json.put("timestamp", event.timestamp().toString());
+            homeworkEventProducer.publishHomeworkReviewed(json);
+        } catch (JSONException e) {
+            logger.error(e.getMessage());
+        }
     }
 }

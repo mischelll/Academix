@@ -21,4 +21,8 @@ public class HomeworkEventProducer {
     public void publishHomeworkSubmitted(JSONObject payload) {
         kafkaTemplate.send("homework.submission", UUID.randomUUID().toString(), payload.toString());
     }
+
+    public void publishHomeworkReviewed(JSONObject payload) {
+        kafkaTemplate.send("homework.reviewed", UUID.randomUUID().toString(), payload.toString());
+    }
 }

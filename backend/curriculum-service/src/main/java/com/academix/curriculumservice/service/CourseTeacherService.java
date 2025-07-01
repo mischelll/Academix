@@ -17,6 +17,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,20 @@ public class CourseTeacherService {
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
         Course course = lesson.getCourse();
         return repository.existsByCourseAndTeacherId(course, userId);
+    }
+
+    public List<Long> getTeacherLessonIds(Long teacherId) {
+        // Get all courses where the teacher is assigned
+        List<Course> teacherCourses = repository.findByTeacherId(teacherId)
+                .stream()
+                .map(CourseTeacher::getCourse)
+                .toList();
+
+        // Get all lessons from those courses
+        return teacherCourses.stream()
+                .flatMap(course -> lessonRepository.findAllByCourse(course).stream())
+                .map(Lesson::getId)
+                .collect(Collectors.toList());
     }
 }
 

@@ -3,8 +3,6 @@ package com.academix.notificationservice.config;
 import com.academix.notificationservice.consumers.events.HomeworkReminderEvent;
 import com.academix.notificationservice.consumers.events.HomeworkReviewedEvent;
 import com.academix.notificationservice.consumers.events.HomeworkSubmissionEvent;
-import com.twilio.Twilio;
-import com.twilio.http.TwilioRestClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -43,11 +41,6 @@ public class KafkaConsumerConfig {
     @Bean
     public JavaMailSender mailSender() {
         return new JavaMailSenderImpl();
-    }
-
-    @Bean
-    public TwilioRestClient twilio() {
-        return Twilio.getRestClient();
     }
 
     @Bean

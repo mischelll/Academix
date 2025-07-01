@@ -44,6 +44,7 @@ public class UserService {
                 user.getId(),
                 user.getFirstName(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getRoles()
                 .stream()
                 .map(rl -> rl.getName().toString())
@@ -63,6 +64,7 @@ public class UserService {
                 user.getId(),
                 user.getFirstName(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getRoles()
                         .stream()
                         .map(rl -> rl.getName().toString())

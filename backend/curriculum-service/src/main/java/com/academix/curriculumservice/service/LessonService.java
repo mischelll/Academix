@@ -67,7 +67,11 @@ public class LessonService {
                         .collect(Collectors.toSet()));
 
         Map<Long, Long> lessonEndTimeMap = homeworkMetaByLessonIds.stream().distinct()
-                .collect(Collectors.toMap(HomeworkMetaDTO::lessonId, HomeworkMetaDTO::endTime));
+                .collect(Collectors.toMap(
+                        HomeworkMetaDTO::lessonId,
+                        HomeworkMetaDTO::endTime,
+                        (a, b) -> Math.max(a, b)
+                ));
 
         return allByCourse.stream()
                 .map(lesson -> {

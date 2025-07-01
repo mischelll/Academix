@@ -1,6 +1,7 @@
 package com.academix.userservice.security.oauth2;
 
 import com.academix.userservice.dao.RefreshToken;
+import com.academix.userservice.dao.Role;
 import com.academix.userservice.dao.RoleEnum;
 import com.academix.userservice.dao.User;
 import com.academix.userservice.repository.RoleRepository;
@@ -60,6 +61,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String picture = oAuth2User.getAttribute("picture");
         boolean isVerified = Boolean.parseBoolean(oAuth2User.getAttribute("verified"));
 
+        // Determine role based on email (for testing purposes)
+        Set<Role> roles;
+        if ("teacher@test.com".equals(email)) {
+            roles = Set.of(roleRepository.findByName(RoleEnum.ROLE_TEACHER));
+        } else if ("admin@test.com".equals(email)) {
+            roles = Set.of(roleRepository.findByName(RoleEnum.ROLE_ADMIN));
+        } else {
+            roles = Set.of(roleRepository.findByName(RoleEnum.ROLE_STUDENT));
+        }
+
         User userBuilt = User.builder()
                 .username(email)
                 .avatar(picture)
@@ -72,7 +83,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .city("Sofia")
                 .zip("1000")
                 .country("Bulgaria")
-                .roles(Set.of(roleRepository.findByName(RoleEnum.ROLE_STUDENT)))
+                .roles(roles)
                 .build();
 
         return userRepository.findByEmail(email).orElseGet(() -> userRepository.save(userBuilt));

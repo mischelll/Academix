@@ -1,12 +1,15 @@
 package com.academix.homeworkservice.web;
 
 import com.academix.homeworkservice.service.HomeworkService;
+import com.academix.homeworkservice.service.dto.GradeHomeworkRequest;
 import com.academix.homeworkservice.service.dto.HomeworkMetaDTO;
+import com.academix.homeworkservice.service.dto.TeacherHomeworkDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -66,5 +69,21 @@ public class HomeworkController {
         return ResponseEntity
                 .status(HttpStatusCode.valueOf(200))
                 .body(homeworkService.getDownloadUrl(lessonId, principal));
+    }
+
+    @GetMapping("/teacher/dashboard")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    public ResponseEntity<List<TeacherHomeworkDTO>> getTeacherDashboard(Principal principal) {
+        logger.info("Getting teacher dashboard for user: {}", principal.getName());
+        return ResponseEntity.ok(homeworkService.getHomeworksForTeacher(principal));
+    }
+
+    @PostMapping("/teacher/grade")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    public ResponseEntity<com.academix.homeworkservice.dao.entity.Homework> gradeHomework(
+            @RequestBody GradeHomeworkRequest request, 
+            Principal principal) {
+        logger.info("Grading homework: {} by teacher: {}", request.homeworkId(), principal.getName());
+        return ResponseEntity.ok(homeworkService.gradeHomework(request, principal));
     }
 }

@@ -37,10 +37,12 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/homeworks/internal/**")
                 .securityMatcher("/api/curriculum/internal/**")
+                .securityMatcher("/api/users/internal/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/homeworks/internal/**").hasAuthority("INTERNAL")
                         .requestMatchers("/api/curriculum/internal/**").hasAuthority("INTERNAL")
+                        .requestMatchers("/api/users/internal/**").hasAuthority("INTERNAL")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(internalApiAuthFilter, UsernamePasswordAuthenticationFilter.class);

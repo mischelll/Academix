@@ -15,4 +15,6 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     Homework findByLessonIdEquals(Long lessonId);
 
     List<Homework> findByLessonIdIn(Collection<Long> lessonIds);
+
+    List<Homework> findByLessonIdInAndStatus(Collection<Long> lessonIds, com.academix.homeworkservice.dao.entity.HomeworkStatus status);
 }

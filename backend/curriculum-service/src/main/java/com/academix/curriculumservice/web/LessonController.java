@@ -3,6 +3,7 @@ package com.academix.curriculumservice.web;
 import com.academix.curriculumservice.service.LessonService;
 import com.academix.curriculumservice.service.dto.lesson.CreateLessonRequest;
 import com.academix.curriculumservice.service.dto.lesson.LessonDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,5 +44,10 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public void deleteLesson(@PathVariable Long id) {
         lessonService.delete(id);
+    }
+
+    @GetMapping("/internal/lessons/{lessonId}")
+    public ResponseEntity<LessonDTO> getLessonByIdInternal(@PathVariable Long lessonId) {
+        return ResponseEntity.ok(lessonService.getLesson(lessonId));
     }
 }

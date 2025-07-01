@@ -14,7 +14,7 @@ spring:
     name: user-service
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 server:
   port: 8081
