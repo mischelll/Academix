@@ -43,7 +43,7 @@ export default function HomeworkInfo() {
     setUploading(true);
     try {
       await uploadHomework(file.name, file);
-      const filePath = `homeworks/${file.name}`;
+      const filePath = `${file.name}`;
       
       // Note: This component doesn't have lessonId, so we'll need to get it from homework data
       // For now, using a placeholder lessonId of 1

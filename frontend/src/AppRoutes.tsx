@@ -8,6 +8,7 @@ import Homework from "./components/homework/Homework";
 import Home from "./components/Home";
 import Curriculum from "./components/curriculum/Curriculum";
 import TeacherDashboard from "./components/TeacherDashboard";
+import Landing from "./components/Landing";
 
 export default function AppRoutes() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/profile" element={<UserInfo />} />

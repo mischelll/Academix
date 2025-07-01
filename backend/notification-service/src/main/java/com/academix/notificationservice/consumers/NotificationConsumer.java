@@ -1,10 +1,8 @@
 package com.academix.notificationservice.consumers;
 
-import com.academix.notificationservice.client.UserServiceClient;
+import com.academix.notificationservice.client.UserServiceFeignClient;
+import com.academix.notificationservice.client.UserServiceFeignClient.UserMetaResponse;
 import com.academix.notificationservice.client.dto.UserDTO;
-import com.academix.notificationservice.consumers.events.HomeworkReminderEvent;
-import com.academix.notificationservice.consumers.events.HomeworkReviewedEvent;
-import com.academix.notificationservice.consumers.events.HomeworkSubmissionEvent;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -23,11 +21,11 @@ public class NotificationConsumer {
     private static final Logger logger = LoggerFactory.getLogger(NotificationConsumer.class);
 
     private final JavaMailSender mailSender;
-    private final UserServiceClient userServiceClient;
+    private final UserServiceFeignClient userServiceClient;
     private final TwilioRestClient twilioRestClient;
     private final String twilioPhoneNumber;
 
-    public NotificationConsumer(JavaMailSender mailSender, UserServiceClient userServiceClient, 
+    public NotificationConsumer(JavaMailSender mailSender, UserServiceFeignClient userServiceClient,
                                TwilioRestClient twilioRestClient, String twilioPhoneNumber) {
         this.mailSender = mailSender;
         this.userServiceClient = userServiceClient;
@@ -40,21 +38,22 @@ public class NotificationConsumer {
         JSONObject json = new JSONObject(message);
         Long studentId = json.getLong("studentId");
         Long homeworkId = json.getLong("homeworkId");
-
-        String teacherEmail = userServiceClient.getTeacherEmailByLessonId(
-                json.getLong("lessonId")
-        );
-
+        // TODO: Fetch teacher email by lessonId using curriculum service or another Feign client
+        String teacherEmail = null;
+        // String teacherEmail = ...
         String subject = "Neue Hausaufgabe eingereicht";
         String text = String.format(
                 "Student (ID: %d) hat die Hausaufgabe mit ID %d hochgeladen. Bitte prüfen Sie das Ergebnis.",
                 studentId, homeworkId
         );
-
         sendEmail(teacherEmail, subject, text);
     }
 
     private void sendEmail(String to, String subject, String body) {
+        if (to == null || to.isBlank()) {
+            logger.error("Attempted to send email to null or empty address. Subject: {}, Body: {}", subject, body);
+            return;
+        }
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -69,8 +68,11 @@ public class NotificationConsumer {
         Long homeworkId = json.getLong("homeworkId");
         Long grade = json.optLong("grade", -1);
 
-        UserDTO student = userServiceClient.getUserByIdAsDTO(studentId);
-        
+        UserMetaResponse response = userServiceClient.getUserById(studentId);
+        UserDTO student = null;
+        if (response != null) {
+            student = new UserDTO(response.email(), response.name(), response.phone());
+        }
         if (student == null) {
             logger.error("Could not find user with ID: " + studentId + " for homework review notification");
             return;
@@ -103,8 +105,11 @@ public class NotificationConsumer {
         Long homeworkId = json.getLong("homeworkId");
         String timeLeft = json.getString("timeLeft");
 
-        UserDTO student = userServiceClient.getUserByIdAsDTO(studentId);
-        
+        UserMetaResponse response = userServiceClient.getUserById(studentId);
+        UserDTO student = null;
+        if (response != null) {
+            student = new UserDTO(response.email(), response.name(), response.phone());
+        }
         if (student == null) {
             logger.error("Could not find user with ID: " + studentId + " for homework reminder notification");
             return;

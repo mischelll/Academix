@@ -50,4 +50,9 @@ public class CourseTeacherController {
     public ResponseEntity<List<Long>> getTeacherLessonIds(@PathVariable Long teacherId) {
         return ResponseEntity.ok(service.getTeacherLessonIds(teacherId));
     }
+
+    @GetMapping("/internal/lesson/{lessonId}/teacher")
+    public ResponseEntity<CourseTeacherDTO> getTeacherByLessonId(@PathVariable Long lessonId) {
+        return ResponseEntity.ok(service.findTeacherByLessonId(lessonId));
+    }
 }

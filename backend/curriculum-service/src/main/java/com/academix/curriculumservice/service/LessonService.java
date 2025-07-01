@@ -5,6 +5,7 @@ import com.academix.curriculumservice.dao.entity.Lesson;
 import com.academix.curriculumservice.dao.entity.Major;
 import com.academix.curriculumservice.dao.repository.CourseRepository;
 import com.academix.curriculumservice.dao.repository.LessonRepository;
+import com.academix.curriculumservice.dao.repository.CourseStudentRepository;
 import com.academix.curriculumservice.service.apiclient.homework.HomeworkMetaDTO;
 import com.academix.curriculumservice.service.apiclient.homework.HomeworkServiceClient;
 import com.academix.curriculumservice.service.dto.lesson.CreateLessonRequest;
@@ -28,10 +29,38 @@ public class LessonService {
     private final CourseRepository courseRepository;
     private final HomeworkServiceClient homeworkServiceClient;
     private final LessonMapper mapper;
+    private final CourseStudentRepository courseStudentRepository;
 
     public LessonDTO createLesson(CreateLessonRequest request) {
         Lesson lesson = mapper.fromCreateRequest(request);
-        return mapper.toDto(lessonRepository.save(lesson));
+        Lesson savedLesson = lessonRepository.save(lesson);
+
+        // Fetch all students for the course
+        List<Long> studentIds = courseStudentRepository.findByCourseId(request.courseId())
+                .stream()
+                .map(cs -> cs.getStudentId())
+                .toList();
+
+        // For each student, create a homework in the homework service
+        for (Long studentId : studentIds) {
+            // Compose a minimal HomeworkDTO for the homework service
+            var homeworkDTO = new java.util.HashMap<String, Object>();
+            homeworkDTO.put("title", lesson.getTitle());
+            homeworkDTO.put("content", "");
+            homeworkDTO.put("filePath", "");
+            homeworkDTO.put("studentId", studentId);
+            homeworkDTO.put("lessonId", savedLesson.getId());
+            homeworkDTO.put("description", lesson.getDescription());
+            homeworkDTO.put("credits", 1L);
+            // Call homework service
+            try {
+                homeworkServiceClient.createHomework(homeworkDTO);
+            } catch (Exception e) {
+                // Log and continue
+                System.err.println("Failed to create homework for student " + studentId + ": " + e.getMessage());
+            }
+        }
+        return mapper.toDto(savedLesson);
     }
 
     public LessonDTO getLesson(Long id) {

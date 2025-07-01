@@ -64,6 +64,13 @@ public class HomeworkController {
                 .body(homework1);
     }
 
+    @PostMapping("/internal")
+    public ResponseEntity<com.academix.homeworkservice.dao.entity.Homework> createHomeworkInternal(@RequestBody HomeworkDTO homework) {
+        logger.info("Creating homework (internal): {}", homework);
+        com.academix.homeworkservice.dao.entity.Homework homework1 = homeworkService.createHomework(homework);
+        return ResponseEntity.created(URI.create("/api/homeworks/internal")).body(homework1);
+    }
+
     @GetMapping("/{lessonId}/download-url")
     public ResponseEntity<String> getDownloadUrl(@PathVariable Long lessonId, Principal principal) {
         return ResponseEntity

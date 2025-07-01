@@ -2,14 +2,16 @@ import { useNavigate } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 import Navbar from "./components/layout/Navbar";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { fetchProtectedCurrentUser } from "./api/user";
+import { useEffect, useRef } from "react";
+import { fetchProtectedCurrentUser, } from "./api/user";
 import { useUserStore } from "./stores/userStore";
 import { Toaster } from "./components/ui/sonner";
+import { backfillHomeworksForStudent } from "./api/curriculum";
 
 export default function App() {
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
+  const backfillCalledRef = useRef<Set<number>>(new Set());
 
   const token = localStorage.getItem("authToken");
 
@@ -23,6 +25,11 @@ export default function App() {
   useEffect(() => {
     if (user) {
       setUser(user);
+      // Backfill homeworks for student (only once per user)
+      if (user.roles?.some(role => role.name === 'ROLE_STUDENT') && !backfillCalledRef.current.has(user.id)) {
+        backfillCalledRef.current.add(user.id);
+        backfillHomeworksForStudent(user.id);
+      }
     }
     if (isError) {
       localStorage.removeItem("authToken");

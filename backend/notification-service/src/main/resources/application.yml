@@ -38,6 +38,8 @@ twilio:
 services:
   user:
     url: ${USER_SERVICE_URL:http://localhost:8081}
+  curriculum:
+    url: ${CURRICULUM_SERVICE_URL:http://localhost:8082}
 
 # Internal API Key for service-to-service communication
 api:

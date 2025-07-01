@@ -11,3 +11,7 @@ export const fetchCurriculum = async () => {
 
   return res.data;
 };
+
+export const backfillHomeworksForStudent = async (studentId: number) => {
+  await apiClient.post(apiUrl + `/curriculum/homeworks/backfill-for-student/${studentId}`);
+};

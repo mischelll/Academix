@@ -13,7 +13,7 @@ import { fetchSemestersByMajor } from "@/api/semesters";
 import { fetchAssignedTeacher, fetchCoursesBySemester } from "@/api/courses";
 import { fetchLessonsByCourse } from "@/api/lessons";
 import CountdownTimer from "./utils/CountdownTimer";
-import { Upload, Download, Loader2, Calendar, FileText, Check, Clock, X } from "lucide-react";
+import { Upload, Loader2, Calendar, FileText, Check, Clock, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { uploadHomework, createHomework } from "@/api/homework";
@@ -132,7 +132,7 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null}) {
     setUploading(true);
     try {
       await uploadHomework(file.name, file);
-      const filePath = `homeworks/${file.name}`;
+      const filePath = `${file.name}`;
       await createHomework(
         user.id,
         lesson.id,
@@ -162,9 +162,16 @@ function LessonCard({ lesson, user }: { lesson: Lesson; user: User | null}) {
           <CardTitle className="text-lg font-semibold">{lesson.title}</CardTitle>
           <StatusBadge status={status} />
         </div>
-        <div className="flex items-center text-sm text-gray-500 mt-1">
+        <div className="flex items-center text-sm text-gray-500 mt-1 gap-2">
           <Calendar className="w-4 h-4 mr-1" />
           {format(new Date(lesson.endTimeMs), "MMM dd, yyyy")}
+          <span className="ml-2">
+            {lesson.endTimeMs && lesson.endTimeMs > Date.now() ? (
+              <CountdownTimer duration={lesson.endTimeMs - Date.now()} />
+            ) : (
+              <span className="text-red-500">Expired</span>
+            )}
+          </span>
         </div>
       </CardHeader>
       <CardContent className="pt-0">

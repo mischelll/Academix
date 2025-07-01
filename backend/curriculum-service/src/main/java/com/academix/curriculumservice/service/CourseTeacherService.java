@@ -78,5 +78,18 @@ public class CourseTeacherService {
                 .map(Lesson::getId)
                 .collect(Collectors.toList());
     }
+
+    public CourseTeacherDTO findTeacherByLessonId(Long lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        Course course = lesson.getCourse();
+        CourseTeacherDTO courseTeacherDTO = repository.findByCourseId(course.getId())
+                .stream()
+                .map(mapper::toDto)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Teacher not found for course"));
+        UserMetaDTO userById = userServiceClient.getUserById(courseTeacherDTO.teacherId());
+        return new CourseTeacherDTO(courseTeacherDTO.id(), course.getId(), userById.id(), userById.name(), userById.email());
+    }
 }
 

@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -54,7 +55,32 @@ public class HomeworkService {
     public Homework createHomework(HomeworkController.HomeworkDTO homeworkDTO) {
         logger.info("Creating a new homework with key={}, studentId={}", homeworkDTO.filePath(), homeworkDTO.studentId());
 
-        Homework homework = Homework.builder()
+        boolean isFileUpload = homeworkDTO.filePath() != null && !homeworkDTO.filePath().isEmpty();
+
+        Optional<Homework> existingOpt = homeworkRepository.findByLessonIdAndStudentId(homeworkDTO.lessonId(), homeworkDTO.studentId());
+        if (existingOpt.isPresent()) {
+            Homework existing = existingOpt.get();
+            if (isFileUpload) {
+                // Update the existing homework for file upload
+                existing.setFilePath(homeworkDTO.filePath());
+                existing.setStatus(HomeworkStatus.SUBMITTED);
+                existing.setSubmittedDate(LocalDateTime.now());
+                existing.setTitle(homeworkDTO.title());
+                existing.setDescription(homeworkDTO.description());
+                existing.setCredits(homeworkDTO.credits());
+                existing.setEndDate(LocalDateTime.now().plusDays(8));
+                existing.setDeadline(LocalDateTime.now().plusDays(7));
+                Homework updated = homeworkRepository.save(existing);
+                sendNotificationEvent(homeworkDTO, updated);
+                return updated;
+            } else {
+                // For backfill or any non-upload, just return the existing homework as-is
+                return existing;
+            }
+        }
+
+        // Create new homework (for backfill or new uploads)
+        Homework.HomeworkBuilder builder = Homework.builder()
                 .credits(homeworkDTO.credits())
                 .deadline(LocalDateTime.now().plusDays(7))
                 .description(homeworkDTO.description())
@@ -63,14 +89,20 @@ public class HomeworkService {
                 .filePath(homeworkDTO.filePath())
                 .studentId(homeworkDTO.studentId())
                 .lessonId(homeworkDTO.lessonId())
-                .status(HomeworkStatus.SUBMITTED)
-                .startDate(LocalDateTime.now())
-                .submittedDate(LocalDateTime.now())
-                .build();
+                .startDate(LocalDateTime.now());
 
+        if (isFileUpload) {
+            builder.status(HomeworkStatus.SUBMITTED);
+            builder.submittedDate(LocalDateTime.now());
+        } else {
+            builder.status(HomeworkStatus.OPEN);
+        }
+
+        Homework homework = builder.build();
         Homework createdHomework = homeworkRepository.save(homework);
-        sendNotificationEvent(homeworkDTO, createdHomework);
-
+        if (isFileUpload) {
+            sendNotificationEvent(homeworkDTO, createdHomework);
+        }
         return createdHomework;
     }
 

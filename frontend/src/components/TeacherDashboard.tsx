@@ -30,7 +30,7 @@ const TeacherDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [gradingLoading, setGradingLoading] = useState<number | null>(null);
   const [selectedHomework, setSelectedHomework] = useState<TeacherHomework | null>(null);
-  const [grade, setGrade] = useState<number>(0);
+  const [grade, setGrade] = useState<number>(2);
   const [comment, setComment] = useState('');
   const [isGradingDialogOpen, setIsGradingDialogOpen] = useState(false);
   
@@ -127,7 +127,7 @@ const TeacherDashboard: React.FC = () => {
 
       setIsGradingDialogOpen(false);
       setSelectedHomework(null);
-      setGrade(0);
+      setGrade(2);
       setComment('');
     } catch (error) {
       console.error('Error grading homework:', error);
@@ -139,7 +139,7 @@ const TeacherDashboard: React.FC = () => {
 
   const openGradingDialog = (homework: TeacherHomework) => {
     setSelectedHomework(homework);
-    setGrade(homework.grade || 0);
+    setGrade(homework.grade ?? 2);
     setComment(homework.comment || '');
     setIsGradingDialogOpen(true);
   };
@@ -331,34 +331,40 @@ const TeacherDashboard: React.FC = () => {
 
       {/* Grading Dialog */}
       <Dialog open={isGradingDialogOpen} onOpenChange={setIsGradingDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[420px] rounded-2xl bg-white shadow-xl border border-blue-100">
           <DialogHeader>
-            <DialogTitle>Grade Homework</DialogTitle>
-            <DialogDescription>
-              Grade the homework for {selectedHomework?.studentName}
+            <DialogTitle className="text-2xl font-bold text-blue-900">Grade Homework</DialogTitle>
+            <DialogDescription className="text-blue-700">
+              Grade the homework for <span className="font-semibold">{selectedHomework?.studentName}</span>
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 py-2">
             <div>
-              <Label htmlFor="grade">Grade (0-100)</Label>
+              <Label htmlFor="grade" className="text-blue-900 font-semibold">Grade (2-6)</Label>
               <Input
                 id="grade"
                 type="number"
-                min="0"
-                max="100"
+                min="2"
+                max="6"
+                step="0.01"
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
                 placeholder="Enter grade"
+                className="mt-1"
               />
+              {(grade < 2 || grade > 6) && (
+                <div className="text-red-600 text-xs mt-1">Grade must be between 2 and 6.</div>
+              )}
             </div>
             <div>
-              <Label htmlFor="comment">Comment</Label>
+              <Label htmlFor="comment" className="text-blue-900 font-semibold">Comment</Label>
               <Textarea
                 id="comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Enter feedback for the student"
                 rows={4}
+                className="mt-1"
               />
             </div>
           </div>
@@ -366,12 +372,14 @@ const TeacherDashboard: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => setIsGradingDialogOpen(false)}
+              className="mr-2"
             >
               Cancel
             </Button>
             <Button
               onClick={handleGrade}
-              disabled={gradingLoading === selectedHomework?.id}
+              disabled={gradingLoading === selectedHomework?.id || grade < 2 || grade > 6}
+              className="bg-gradient-to-r from-blue-600 to-purple-500 text-white font-semibold shadow hover:from-blue-700 hover:to-purple-600 transition-all"
             >
               {gradingLoading === selectedHomework?.id ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
