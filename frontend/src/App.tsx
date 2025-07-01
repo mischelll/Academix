@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { fetchProtectedCurrentUser } from "./api/user";
 import { useUserStore } from "./stores/userStore";
+import { Toaster } from "./components/ui/sonner";
 
 export default function App() {
   const setUser = useUserStore((state) => state.setUser);
@@ -35,6 +36,7 @@ export default function App() {
       <main className="bg-gray-50 min-h-screen p-6">
         <AppRoutes />
       </main>
+      <Toaster />
     </>
   );
 }

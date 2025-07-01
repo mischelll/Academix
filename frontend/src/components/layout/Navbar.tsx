@@ -6,6 +6,11 @@ import { useUserStore } from "@/stores/userStore";
 export default function Navbar() {
   const user = useUserStore((state) => state.user);
 
+  // Check if user is a teacher or admin
+  const isTeacher = user?.roles?.some(role => 
+    role.name === 'ROLE_TEACHER' || role.name === 'ROLE_ADMIN'
+  );
+
   return (
     <nav className="bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -41,6 +46,14 @@ export default function Navbar() {
                 >
                   Curriculum
                 </Link>
+                {isTeacher && (
+                  <Link
+                    to="/teacher-dashboard"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    Teacher Dashboard
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -105,6 +118,14 @@ export default function Navbar() {
             >
               Assignments
             </Link>
+            {isTeacher && (
+              <Link
+                to="/teacher-dashboard"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Teacher Dashboard
+              </Link>
+            )}
           </div>
         </div>
       </div>

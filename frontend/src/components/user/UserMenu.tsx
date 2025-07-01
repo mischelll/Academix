@@ -18,10 +18,20 @@ interface UserMenuProps {
 export function UserMenu({ avatarUrl, userInitials = "UU" }: UserMenuProps) {
   const navigate = useNavigate();
   const clearUser = useUserStore((state) => state.clearUser);
+  const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
+
+  // Check if user is a teacher or admin
+  const isTeacher = user?.roles?.some(role => 
+    role.name === 'ROLE_TEACHER' || role.name === 'ROLE_ADMIN'
+  );
 
   const handleProfileClick = () => {
     navigate("/profile");
+  };
+
+  const handleTeacherDashboardClick = () => {
+    navigate("/teacher-dashboard");
   };
 
   const handleLogout = () => {
@@ -40,7 +50,7 @@ export function UserMenu({ avatarUrl, userInitials = "UU" }: UserMenuProps) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48 mt-2" align="end">
-      <DropdownMenuItem onClick={handleProfileClick}>
+        <DropdownMenuItem onClick={handleProfileClick}>
           Dashboard
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleProfileClick}>
@@ -50,6 +60,14 @@ export function UserMenu({ avatarUrl, userInitials = "UU" }: UserMenuProps) {
         <DropdownMenuItem onClick={handleProfileClick}>
           Curriculum
         </DropdownMenuItem>
+        {isTeacher && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleTeacherDashboardClick}>
+              Teacher Dashboard
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           Logout

@@ -21,6 +21,29 @@ export interface Homework {
   status: HomeworkStatus;
 }
 
+export interface TeacherHomework {
+  id: number;
+  title: string;
+  description: string;
+  studentId: number;
+  studentName: string;
+  studentEmail: string;
+  lessonId: number;
+  lessonTitle: string;
+  filePath: string;
+  submittedDate: string;
+  deadline: string;
+  status: string;
+  grade?: number;
+  comment?: string;
+}
+
+export interface GradeHomeworkRequest {
+  homeworkId: number;
+  grade: number;
+  comment: string;
+}
+
 export enum HomeworkStatus {
   OPEN = "OPEN",
   SUBMITTED = "SUBMITTED", 
@@ -37,6 +60,18 @@ export const fetchHomework = async () => {
 // Fetch all homeworks for the current user
 export const fetchUserHomeworks = async (studentId: number) => {
   const res = await apiClient.get(`${apiUrl}/homeworks/student/${studentId}`);
+  return res.data;
+};
+
+// Fetch homeworks for teacher dashboard
+export const fetchTeacherHomeworks = async (): Promise<TeacherHomework[]> => {
+  const res = await apiClient.get(`${apiUrl}/homeworks/teacher/dashboard`);
+  return res.data;
+};
+
+// Grade a homework
+export const gradeHomework = async (request: GradeHomeworkRequest): Promise<Homework> => {
+  const res = await apiClient.post(`${apiUrl}/homeworks/teacher/grade`, request);
   return res.data;
 };
 
