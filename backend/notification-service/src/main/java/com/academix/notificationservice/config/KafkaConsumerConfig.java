@@ -12,8 +12,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +34,6 @@ public class KafkaConsumerConfig {
                 new StringDeserializer(),
                 deserializer
         );
-    }
-
-    @Bean
-    public JavaMailSender mailSender() {
-        return new JavaMailSenderImpl();
     }
 
     @Bean

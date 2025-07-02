@@ -18,12 +18,18 @@ spring:
     port: 587
     username: ${MAIL_USERNAME:your-email@gmail.com}
     password: ${MAIL_PASSWORD:your-app-password}
+    protocol: smtp
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+          host: smtp.gmail.com
+          port: 587
+          timeout: 5000
+          connectiontimeout: 5000
+          writetimeout: 5000
 
 server:
   port: 8085
@@ -44,3 +50,7 @@ services:
 # Internal API Key for service-to-service communication
 api:
   internalApiKey: ${INTERNAL_API_KEY:internal-secret-key}
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:default-jwt-secret}

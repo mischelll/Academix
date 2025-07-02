@@ -20,5 +20,10 @@ public interface CurriculumClient {
     @GetMapping("/curriculum/lessons/internal/lessons/{lessonId}")
     LessonInfo getLessonById(@PathVariable("lessonId") Long lessonId);
 
+    @GetMapping("/curriculum/course-teachers/internal/lesson/{lessonId}/teacher")
+    TeacherInfo getTeacherByLessonId(@PathVariable("lessonId") Long lessonId);
+
     record LessonInfo(Long id, String title, String description, Long courseId, Long endTime) {}
+    
+    record TeacherInfo(Long teacherId, String teacherName, String teacherEmail) {}
 }

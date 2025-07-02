@@ -108,12 +108,34 @@ public class HomeworkService {
 
     private void sendNotificationEvent(HomeworkController.HomeworkDTO homeworkDTO, Homework createdHomework) {
         try {
+            // Fetch student information
+            UserMetaDTO student = userServiceClient.getUserById(createdHomework.getStudentId());
+            
+            // Fetch teacher information for the lesson
+            String teacherEmail = null;
+            String teacherName = null;
+            try {
+                // Get teacher info from curriculum service
+                var teacherInfo = curriculumClient.getTeacherByLessonId(createdHomework.getLessonId());
+                if (teacherInfo != null) {
+                    teacherEmail = teacherInfo.teacherEmail();
+                    teacherName = teacherInfo.teacherName();
+                }
+            } catch (Exception e) {
+                logger.warn("Could not fetch teacher info for lesson {}: {}", createdHomework.getLessonId(), e.getMessage());
+            }
+
             HomeworkSubmissionEvent event = new HomeworkSubmissionEvent(
                     createdHomework.getId(),
                     createdHomework.getLessonId(),
                     createdHomework.getStudentId(),
                     homeworkDTO.filePath(),
-                    Instant.now()
+                    Instant.now(),
+                    student != null ? student.email() : null,
+                    student != null ? student.name() : null,
+                    student != null ? student.phone() : null,
+                    teacherEmail,
+                    teacherName
             );
 
             JSONObject json = new JSONObject();
@@ -122,6 +144,11 @@ public class HomeworkService {
             json.put("studentId", event.studentId());
             json.put("filePath", event.filePath());
             json.put("submittedAt", event.timestamp().toString());
+            json.put("studentEmail", event.studentEmail());
+            json.put("studentName", event.studentName());
+            json.put("studentPhone", event.studentPhone());
+            json.put("teacherEmail", event.teacherEmail());
+            json.put("teacherName", event.teacherName());
             homeworkEventProducer.publishHomeworkSubmitted(json);
         } catch (JSONException e) {
             logger.error(e.getMessage());
@@ -245,13 +272,19 @@ public class HomeworkService {
 
     private void sendGradingNotificationEvent(Homework homework, Long teacherId) {
         try {
+            // Fetch student information
+            UserMetaDTO student = userServiceClient.getUserById(homework.getStudentId());
+            
             HomeworkReviewedEvent event = new HomeworkReviewedEvent(
                     homework.getId(),
                     homework.getLessonId(),
                     homework.getGrade() != null ? homework.getGrade().longValue() : null,
                     homework.getStudentId(),
                     teacherId,
-                    Instant.now()
+                    Instant.now(),
+                    student != null ? student.email() : null,
+                    student != null ? student.name() : null,
+                    student != null ? student.phone() : null
             );
 
             JSONObject json = new JSONObject();
@@ -261,6 +294,9 @@ public class HomeworkService {
             json.put("studentId", event.studentId());
             json.put("reviewedBy", event.reviewedBy());
             json.put("timestamp", event.timestamp().toString());
+            json.put("studentEmail", event.studentEmail());
+            json.put("studentName", event.studentName());
+            json.put("studentPhone", event.studentPhone());
             homeworkEventProducer.publishHomeworkReviewed(json);
         } catch (JSONException e) {
             logger.error(e.getMessage());
